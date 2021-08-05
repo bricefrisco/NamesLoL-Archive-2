@@ -5,6 +5,9 @@ pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
 
+#Secrets
+src/main/resources/application.properties
+
 # Eclipse
 .project
 .classpath
