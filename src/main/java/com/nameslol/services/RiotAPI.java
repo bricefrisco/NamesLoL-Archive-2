@@ -42,7 +42,6 @@ public class RiotAPI {
                 .build();
 
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-        LOGGER.info(response.body());
         return MAPPER.readValue(response.body(), SummonerRecordDTO.class);
     }
 }

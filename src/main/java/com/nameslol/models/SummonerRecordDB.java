@@ -3,8 +3,10 @@ package com.nameslol.models;
 import java.sql.Date;
 
 public class SummonerRecordDB {
+    private String n;
+
     // Availability date
-    private Date ad;
+    private long ad;
 
     // Region
     private String r;
@@ -24,7 +26,11 @@ public class SummonerRecordDB {
     // Last updated
     private long ld;
 
-    public Date getAd() {
+    public String getN() {
+        return n;
+    }
+
+    public long getAd() {
         return ad;
     }
 
@@ -52,7 +58,7 @@ public class SummonerRecordDB {
         return ld;
     }
 
-    public void setAd(Date ad) {
+    public void setAd(long ad) {
         this.ad = ad;
     }
 
@@ -78,6 +84,10 @@ public class SummonerRecordDB {
 
     public void setLd(long ld) {
         this.ld = ld;
+    }
+
+    public void setN(String n) {
+        this.n = n;
     }
 
     @Override
