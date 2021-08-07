@@ -1,22 +1,22 @@
 package com.nameslol.routes;
 
-import com.nameslol.models.Region;
-import com.nameslol.services.RiotAPI;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.inject.Inject;
+import javax.enterprise.context.ApplicationScoped;
 
 @RegisterForReflection
+@ApplicationScoped
 public class DataLoaderRoute extends RouteBuilder {
 
-    @Inject
-    RiotAPI riotAPI;
+    @ConfigProperty(name = "dataloader.throttle-per-second")
+    Integer throttle;
 
     @Override
     public void configure() {
         from("{{dataloader.input-file}}")
+                .routeId("input-loader")
                 .split().tokenize("\n")
                 .to("bean:riotAPI?method=format")
                 .setHeader("name", simple("${body}"))
@@ -30,21 +30,45 @@ public class DataLoaderRoute extends RouteBuilder {
                 .wireTap("seda:tr-queue");
 
 
-        from("seda:na-queue").throttle(3).setHeader("region", simple("NA")).to("direct:update-summoner");
-        from("seda:br-queue").throttle(3).setHeader("region", simple("BR")).to("direct:update-summoner");
-        from("seda:eune-queue").throttle(3).setHeader("region", simple("EUNE")).to("direct:update-summoner");
-        from("seda:euw-queue").throttle(3).setHeader("region", simple("EUW")).to("direct:update-summoner");
-        from("seda:kr-queue").throttle(3).setHeader("region", simple("KR")).to("direct:update-summoner");
-        from("seda:lan-queue").throttle(3).setHeader("region", simple("LAN")).to("direct:update-summoner");
-        from("seda:las-queue").throttle(3).setHeader("region", simple("LAS")).to("direct:update-summoner");
-        from("seda:tr-queue").throttle(3).setHeader("region", simple("TR")).to("direct:update-summoner");
+        from("seda:na-queue")
+                .routeId("na-queue")
+                .throttle(throttle)
+                .setHeader("region", simple("NA"))
+                .to("direct:update-summoner");
 
-        from("direct:update-summoner")
-                .to("bean:riotAPI?method=fetchSummonerName(${body}, ${headers.region})")
-                .log("Region ${headers.region}: ${body}");
-    }
+        from("seda:br-queue")
+                .throttle(throttle)
+                .setHeader("region", simple("BR"))
+                .to("direct:update-summoner");
 
-    private Predicate regionIs(Region region) {
-        return e -> e.getIn().getHeader("region", Region.class) == region;
+        from("seda:eune-queue")
+                .throttle(throttle)
+                .setHeader("region", simple("EUNE"))
+                .to("direct:update-summoner");
+
+        from("seda:euw-queue")
+                .throttle(throttle)
+                .setHeader("region", simple("EUW"))
+                .to("direct:update-summoner");
+
+        from("seda:kr-queue")
+                .throttle(throttle)
+                .setHeader("region", simple("KR"))
+                .to("direct:update-summoner");
+
+        from("seda:lan-queue")
+                .throttle(throttle)
+                .setHeader("region", simple("LAN"))
+                .to("direct:update-summoner");
+
+        from("seda:las-queue")
+                .throttle(throttle)
+                .setHeader("region", simple("LAS"))
+                .to("direct:update-summoner");
+
+        from("seda:tr-queue")
+                .throttle(throttle)
+                .setHeader("region", simple("TR"))
+                .to("direct:update-summoner");
     }
 }
