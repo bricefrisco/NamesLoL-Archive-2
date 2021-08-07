@@ -20,17 +20,16 @@ public class DynamoDBRoute extends RouteBuilder {
                     .log(LoggingLevel.ERROR, "${exception.message}")
                     .log(LoggingLevel.ERROR, "${exception.stacktrace}")
                 .end()
-                .setHeader("name", simple("${body}"))
                 .to("bean:riotAPI?method=fetchSummonerName(${headers.name}, ${headers.region})")
                 .setHeader("summoner", simple("${body}"))
                 .bean(RecordMapper.class, "toAttributeValues(${body}, ${headers.region})")
                 .setHeader("CamelAwsDdbItem", simple("${body}"))
-                .to("aws2-ddb://lol-summoners-test" +
+                .wireTap("aws2-ddb://lol-summoners-test" +
                         "?operation=PutItem" +
                         "&accessKey=RAW({{aws.access-key}})" +
                         "&secretKey=RAW({{aws.secret-key}})" +
                         "&region={{aws.region}}")
-                .log("Inserted summoner: ${headers.name} (${headers.region})")
+                .log("Inserting summoner: ${headers.name} (${headers.region})")
                 .setBody(simple("${headers.summoner}"));
 
         from("direct:query-by-name")

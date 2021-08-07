@@ -37,36 +37,43 @@ public class DataLoaderRoute extends RouteBuilder {
                 .to("direct:update-summoner");
 
         from("seda:br-queue")
+                .routeId("br-queue")
                 .throttle(throttle)
                 .setHeader("region", simple("BR"))
                 .to("direct:update-summoner");
 
         from("seda:eune-queue")
+                .routeId("eune-queue")
                 .throttle(throttle)
                 .setHeader("region", simple("EUNE"))
                 .to("direct:update-summoner");
 
         from("seda:euw-queue")
+                .routeId("euw-queue")
                 .throttle(throttle)
                 .setHeader("region", simple("EUW"))
                 .to("direct:update-summoner");
 
         from("seda:kr-queue")
+                .routeId("kr-queue")
                 .throttle(throttle)
                 .setHeader("region", simple("KR"))
                 .to("direct:update-summoner");
 
         from("seda:lan-queue")
+                .routeId("lan-queue")
                 .throttle(throttle)
                 .setHeader("region", simple("LAN"))
                 .to("direct:update-summoner");
 
         from("seda:las-queue")
+                .routeId("las-queue")
                 .throttle(throttle)
                 .setHeader("region", simple("LAS"))
                 .to("direct:update-summoner");
 
         from("seda:tr-queue")
+                .routeId("tr-queue")
                 .throttle(throttle)
                 .setHeader("region", simple("TR"))
                 .to("direct:update-summoner");

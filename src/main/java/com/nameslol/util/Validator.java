@@ -21,4 +21,9 @@ public final class Validator {
     public static void validateNameLength(int nameLength) {
         if (nameLength < 3) throw new BadRequestException("Name length must be at least 3.");
     }
+
+    public static void validateName(String name) {
+        if (name == null || name.isBlank()) throw new BadRequestException("Name cannot be null or empty.");
+        if (name.length() < 3) throw new BadRequestException("Name length must be at least 3.");
+    }
 }

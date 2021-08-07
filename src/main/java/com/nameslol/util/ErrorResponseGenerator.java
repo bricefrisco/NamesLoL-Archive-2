@@ -11,12 +11,12 @@ public final class ErrorResponseGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorResponseGenerator.class);
     public static ObjectMapper MAPPER = new ObjectMapper();
 
-    public static String generate(String message) {
+    public static String generate(String message, int statusCode) {
         if (message == null) message = "Unknown exception occurred.";
 
         ErrorResponse errorResponse = new ErrorResponse(
                 new Timestamp(System.currentTimeMillis()),
-                400,
+                statusCode,
                 message
         );
 
