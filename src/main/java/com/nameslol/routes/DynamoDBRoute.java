@@ -41,7 +41,7 @@ public class DynamoDBRoute extends RouteBuilder {
 
         from("direct:query-by-name-size")
                 .routeId("query-by-name-size")
-                .bean(QueryUtil.class, "byNameSize(${headers.region}, ${headers.timestamp}, ${headers.backwards}, ${body})")
+                .bean(QueryUtil.class, "byNameSize(${headers.region}, ${headers.timestamp}, ${headers.backwards}, ${headers.nameLength})")
                 .setHeader("CamelAwsDdbKeyConditions", simple("${body}"))
                 .setHeader("CamelAwsDdbLimit", simple("{{aws.dynamodb.limit}}"))
                 .setHeader("CamelAwsDdbIndexName", simple("name-length-availability-date-index"))

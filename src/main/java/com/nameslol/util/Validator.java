@@ -17,4 +17,8 @@ public final class Validator {
         if (timestamp == 0) throw new BadRequestException("Timestamp cannot be 0.");
         if (timestamp < 1) throw new BadRequestException("Timestamp cannot be negative.");
     }
+
+    public static void validateNameLength(int nameLength) {
+        if (nameLength < 3) throw new BadRequestException("Name length must be at least 3.");
+    }
 }

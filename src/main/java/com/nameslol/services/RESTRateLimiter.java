@@ -1,16 +1,16 @@
 package com.nameslol.services;
 
-import com.nameslol.util.IPUtil;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import io.vertx.core.http.HttpServerRequest;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 import java.util.HashMap;
 
 @ApplicationScoped
+@Named("restRateLimiter")
 @RegisterForReflection
 public class RESTRateLimiter {
     private static final HashMap<String, Long> requests = new HashMap<>();
