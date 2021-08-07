@@ -8,16 +8,11 @@ import java.sql.Timestamp;
 public class ErrorResponse {
     private Timestamp timestamp;
     private int status;
-    private String error;
     private String message;
 
-    public ErrorResponse() {
-    }
-
-    public ErrorResponse(Timestamp timestamp, int status, String error, String message) {
+    public ErrorResponse(Timestamp timestamp, int status, String message) {
         this.timestamp = timestamp;
         this.status = status;
-        this.error = error;
         this.message = message;
     }
 
@@ -35,14 +30,6 @@ public class ErrorResponse {
 
     public void setStatus(int status) {
         this.status = status;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
     }
 
     public String getMessage() {

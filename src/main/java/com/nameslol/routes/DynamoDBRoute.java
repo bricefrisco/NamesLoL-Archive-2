@@ -11,6 +11,8 @@ public class DynamoDBRoute extends RouteBuilder {
 
     @Override
     public void configure() {
+        errorHandler(noErrorHandler());
+
         from("direct:update-summoner")
                 .routeId("update-summoner")
                 .onException(Exception.class)
@@ -33,7 +35,7 @@ public class DynamoDBRoute extends RouteBuilder {
 
         from("direct:query-by-name")
                 .routeId("query-by-name")
-                .bean(QueryUtil.class, "byName(${body}, ${headers.region})")
+                .bean(QueryUtil.class, "byName(${headers.name}, ${headers.region})")
                 .setHeader("CamelAwsDdbKeyConditions", simple("${body}"))
                 .to("direct:query");
 
@@ -41,17 +43,26 @@ public class DynamoDBRoute extends RouteBuilder {
                 .routeId("query-by-name-size")
                 .bean(QueryUtil.class, "byNameSize(${headers.region}, ${headers.timestamp}, ${headers.backwards}, ${body})")
                 .setHeader("CamelAwsDdbKeyConditions", simple("${body}"))
+                .setHeader("CamelAwsDdbLimit", simple("{{aws.dynamodb.limit}}"))
+                .setHeader("CamelAwsDdbIndexName", simple("name-length-availability-date-index"))
+                .setHeader("CamelAwsDdbScanIndexForward", simple("!${headers.backwards}"))
                 .to("direct:query");
 
         from("direct:query-between")
                 .routeId("query-between")
-                .bean(QueryUtil.class, "between(${body}, ${headers.t1}, ${headers.t2})")
+                .bean(QueryUtil.class, "between(${headers.region}, ${headers.t1}, ${headers.t2})")
                 .setHeader("CamelAwsDdbKeyConditions", simple("${body}"))
+                .setHeader("CamelAwsDdbLimit", simple("{{aws.dynamodb.limit}}"))
+                .setHeader("CamelAwsDdbIndexName", simple("region-activation-date-index"))
                 .to("direct:query");
 
         from("direct:query-range")
                 .routeId("query-range")
-                .bean(QueryUtil.class, "range(${body}, ${headers.timestamp}, ${headers.backwards}")
+                .bean(QueryUtil.class, "range(${headers.region}, ${headers.timestamp}, ${headers.backwards})")
+                .setHeader("CamelAwsDdbKeyConditions", simple("${body}"))
+                .setHeader("CamelAwsDdbLimit", simple("{{aws.dynamodb.limit}}"))
+                .setHeader("CamelAwsDdbIndexName", simple("region-activation-date-index"))
+                .setHeader("CamelAwsDdbScanIndexForward", simple("!${headers.backwards}"))
                 .to("direct:query");
 
         from("direct:query")

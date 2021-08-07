@@ -2,11 +2,14 @@ package com.nameslol.util;
 
 import com.nameslol.models.Region;
 import com.nameslol.models.SummonerRecordDTO;
+import com.nameslol.models.SummonerResponseDTO;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public final class RecordMapper {
     public static long toAvailabilityDate(long revisionDate, int level) {
@@ -33,6 +36,23 @@ public final class RecordMapper {
         result.put("ld", toAttributeNumber(System.currentTimeMillis()));
         result.put("pid", toAttributeNumber(dto.getProfileIconId()));
         return result;
+    }
+
+    public static List<SummonerResponseDTO> toSummonerResponseDTOs(List<Map<String, AttributeValue>> req) {
+        return req.stream().map(RecordMapper::toSummonerResponseDTO).collect(Collectors.toList());
+    }
+
+    public static SummonerResponseDTO toSummonerResponseDTO(Map<String, AttributeValue> req) {
+        SummonerResponseDTO res = new SummonerResponseDTO();
+        res.setRegion(req.get("r").s());
+        res.setAccountId(req.get("aid").s());
+        res.setRevisionDate(Long.parseLong(req.get("rd").n()));
+        res.setLevel(Integer.parseInt(req.get("l").n()));
+        res.setAvailabilityDate(Long.parseLong(req.get("ad").n()));
+        res.setName(req.get("n").s().split("#")[1].toLowerCase());
+        res.setLastUpdated(Long.parseLong(req.get("ld").n()));
+        res.setProfileIconId(Integer.parseInt(req.get("pid").n()));
+        return res;
     }
 
     public static AttributeValue toAttributeString(String s) {

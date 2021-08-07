@@ -10,7 +10,7 @@ import java.util.Map;
 public class QueryUtil {
     public static Map<String, Condition> byName(String name, String region) {
         Map<String, Condition> query = new HashMap<>();
-        AttributeValue nameAttr = RecordMapper.toAttributeString(Region.valueOf(region).name() + "#" + name.trim().toUpperCase());
+        AttributeValue nameAttr = RecordMapper.toAttributeString(toRegion(region).name() + "#" + name.trim().toUpperCase());
         Condition cond = Condition.builder().attributeValueList(nameAttr).comparisonOperator(ComparisonOperator.EQ).build();
         query.put("n", cond);
         return query;
@@ -18,7 +18,7 @@ public class QueryUtil {
 
     public static Map<String, Condition> between(String region, long t1, long t2) {
         Map<String, Condition> query = new HashMap<>();
-        AttributeValue r = RecordMapper.toAttributeString(Region.valueOf(region).name());
+        AttributeValue r = RecordMapper.toAttributeString(toRegion(region).name());
         AttributeValue t1v = RecordMapper.toAttributeNumber(t1);
         AttributeValue t2v = RecordMapper.toAttributeNumber(t2);
         Condition cond1 = Condition.builder().attributeValueList(r).comparisonOperator(ComparisonOperator.EQ).build();
@@ -30,7 +30,7 @@ public class QueryUtil {
 
     public static Map<String, Condition> range(String region, long timestamp, boolean backwards) {
         Map<String, Condition> query = new HashMap<>();
-        AttributeValue r = RecordMapper.toAttributeString(Region.valueOf(region).name());
+        AttributeValue r = RecordMapper.toAttributeString(toRegion(region).name());
         AttributeValue t = RecordMapper.toAttributeNumber(timestamp);
         Condition cond1 = Condition.builder().attributeValueList(r).comparisonOperator(ComparisonOperator.EQ).build();
         Condition cond2 = Condition.builder().attributeValueList(t).comparisonOperator(backwards ? ComparisonOperator.LE : ComparisonOperator.GE).build();
@@ -41,13 +41,22 @@ public class QueryUtil {
 
     public static Map<String, Condition> byNameSize(String region, long timestamp, boolean backwards, int nameSize) {
         Map<String, Condition> query = new HashMap<>();
-        AttributeValue nl = RecordMapper.toAttributeString(Region.valueOf(region).name() + "#" + nameSize);
+        AttributeValue nl = RecordMapper.toAttributeString(toRegion(region).name() + "#" + nameSize);
         AttributeValue t = RecordMapper.toAttributeNumber(timestamp);
         Condition cond1 = Condition.builder().attributeValueList(nl).comparisonOperator(ComparisonOperator.EQ).build();
         Condition cond2 = Condition.builder().attributeValueList(t).comparisonOperator(backwards ? ComparisonOperator.LE : ComparisonOperator.GE).build();
         query.put("nl", cond1);
         query.put("ad", cond2);
         return query;
+    }
+
+    private static Region toRegion(String r) {
+        if (r == null || r.isBlank()) throw new IllegalArgumentException("'" + r + "' is in invalid region.");
+        try {
+            return Region.valueOf(r.toUpperCase());
+        } catch (Exception e) {
+            throw new IllegalArgumentException("'" + r + "' is an invalid region.");
+        }
     }
 
 

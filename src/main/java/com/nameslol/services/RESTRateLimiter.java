@@ -19,10 +19,6 @@ public class RESTRateLimiter {
     @ConfigProperty(name = "rest.throttle-ms")
     Integer throttle;
 
-    public boolean isLimited(HttpServerRequest request) {
-        return isLimited(IPUtil.toIP(request));
-    }
-
     public boolean isLimited(String ip) {
         Long lastReq = requests.get(ip);
 
