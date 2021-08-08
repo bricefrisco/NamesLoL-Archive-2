@@ -55,6 +55,12 @@ public final class RecordMapper {
         return res;
     }
 
+    public static Map<String, AttributeValue> toAttributeMap(String name, String region) {
+        Map<String, AttributeValue> result = new HashMap<>();
+        result.put("n", toAttributeString(region.toUpperCase() + "#" + name));
+        return result;
+    }
+
     public static AttributeValue toAttributeString(String s) {
         return AttributeValue.builder().s(s).build();
     }

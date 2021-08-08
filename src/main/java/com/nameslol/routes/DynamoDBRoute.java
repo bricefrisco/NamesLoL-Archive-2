@@ -17,20 +17,40 @@ public class DynamoDBRoute extends RouteBuilder {
                 .routeId("update-summoner")
                 .onException(Exception.class)
                     .handled(Boolean.TRUE)
-                    .log(LoggingLevel.ERROR, "${exception.message}")
-                    .log(LoggingLevel.ERROR, "${exception.stacktrace}")
+                    .log(LoggingLevel.WARN, "${exception.message}")
                 .end()
                 .to("bean:riotAPI?method=fetchSummonerName(${headers.name}, ${headers.region})")
                 .setHeader("summoner", simple("${body}"))
                 .bean(RecordMapper.class, "toAttributeValues(${body}, ${headers.region})")
                 .setHeader("CamelAwsDdbItem", simple("${body}"))
+                .log("Updating summoner: ${headers.name} (${headers.region})")
                 .wireTap("aws2-ddb://lol-summoners-test" +
                         "?operation=PutItem" +
                         "&accessKey=RAW({{aws.access-key}})" +
                         "&secretKey=RAW({{aws.secret-key}})" +
                         "&region={{aws.region}}")
-                .log("Inserting summoner: ${headers.name} (${headers.region})")
+                .choice().when(simple("${headers.isDynamoSummonerName} != null"))
+                    .bean(QueryUtil.class, "summonerNameIsDifferent(${headers.name}, ${headers.summoner.name})")
+                    .choice().when(simple("${body} == true")).wireTap("direct:delete-summoner").end()
+                .end()
                 .setBody(simple("${headers.summoner}"));
+
+
+        from("direct:delete-summoner")
+                .routeId("delete-summoner")
+                .onException(Exception.class)
+                    .handled(Boolean.TRUE)
+                    .log(LoggingLevel.WARN, "${exception.message}")
+                .end()
+                .bean(RecordMapper.class, "toAttributeMap(${headers.name}, ${headers.region})")
+                .setHeader("CamelAwsDdbKey", simple("${body}"))
+                .to("aws2-ddb://lol-summoners-test" +
+                        "?operation=DeleteItem" +
+                        "&accessKey=RAW({{aws.access-key}})" +
+                        "&secretKey=RAW({{aws.secret-key}})" +
+                        "&region={{aws.region}}")
+                .log("Deleted summoner: ${headers.name} (${headers.region})");
+
 
         from("direct:query-by-name")
                 .routeId("query-by-name")
@@ -51,7 +71,7 @@ public class DynamoDBRoute extends RouteBuilder {
                 .routeId("query-between")
                 .bean(QueryUtil.class, "between(${headers.region}, ${headers.t1}, ${headers.t2})")
                 .setHeader("CamelAwsDdbKeyConditions", simple("${body}"))
-                .setHeader("CamelAwsDdbLimit", simple("{{aws.dynamodb.limit}}"))
+                .setHeader("CamelAwsDdbLimit", simple("{{dataloader.query-range-limit}}"))
                 .setHeader("CamelAwsDdbIndexName", simple("region-activation-date-index"))
                 .to("direct:query");
 

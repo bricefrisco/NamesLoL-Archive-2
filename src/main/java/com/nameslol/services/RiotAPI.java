@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.regex.Pattern;
 
 @ApplicationScoped
 @Named("riotAPI")
@@ -33,7 +34,7 @@ public class RiotAPI {
     String riotApiKey;
 
     public String format(String str) {
-        return str.replace("\n", "").replace("\r", "").trim();
+        return str.trim().toUpperCase();
     }
 
     public SummonerRecordDTO fetchSummonerName(String name, String region) throws Exception {

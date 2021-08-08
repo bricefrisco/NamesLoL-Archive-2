@@ -4,7 +4,7 @@ import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RESTUtil {
+public final class RESTUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(RESTUtil.class);
 
     public static void logRequest(Exchange exchange) {

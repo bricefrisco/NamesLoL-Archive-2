@@ -7,7 +7,7 @@ import com.nameslol.models.exceptions.SummonerNotFoundException;
 import com.nameslol.util.ErrorResponseGenerator;
 import com.nameslol.util.RESTUtil;
 import com.nameslol.util.RecordMapper;
-import com.nameslol.util.Validator;
+import com.nameslol.util.RequestValidator;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -79,13 +79,13 @@ public class RESTRoute extends RouteBuilder {
         from("direct:get-summoners")
                 .routeId("get-summoners")
                 .bean(RESTUtil.class, "logRequest(*)")
-                .bean(Validator.class, "validateRegion(${headers.region})")
-                .bean(Validator.class, "validateTimestamp(${headers.timestamp})")
+                .bean(RequestValidator.class, "validateRegion(${headers.region})")
+                .bean(RequestValidator.class, "validateTimestamp(${headers.timestamp})")
                 .choice().when(simple("${headers.nameLength} == null"))
                     .log("Querying range")
                     .to("direct:query-range")
                 .otherwise()
-                    .bean(Validator.class, "validateNameLength(${headers.nameLength})")
+                    .bean(RequestValidator.class, "validateNameLength(${headers.nameLength})")
                     .to("direct:query-by-name-size")
                 .end()
                 .bean(RecordMapper.class, "toSummonerResponseDTOs");
@@ -95,8 +95,8 @@ public class RESTRoute extends RouteBuilder {
                 .bean(RESTUtil.class, "logRequest(*)")
                 .bean(RESTUtil.class, "toIP(*)")
                 .bean("restRateLimiter", "checkIsLimited(${body})")
-                .bean(Validator.class, "validateRegion(${headers.region})")
-                .bean(Validator.class, "validateName(${headers.name})")
+                .bean(RequestValidator.class, "validateRegion(${headers.region})")
+                .bean(RequestValidator.class, "validateName(${headers.name})")
                 .to("direct:update-summoner");
     }
 }

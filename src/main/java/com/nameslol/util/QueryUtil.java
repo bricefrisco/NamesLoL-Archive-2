@@ -4,10 +4,12 @@ import com.nameslol.models.Region;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
+
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class QueryUtil {
+public final class QueryUtil {
     public static Map<String, Condition> byName(String name, String region) {
         Map<String, Condition> query = new HashMap<>();
         AttributeValue nameAttr = RecordMapper.toAttributeString(toRegion(region).name() + "#" + name.trim().toUpperCase());
@@ -48,6 +50,24 @@ public class QueryUtil {
         query.put("nl", cond1);
         query.put("ad", cond2);
         return query;
+    }
+
+    public static long lastWeekInMs() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, 7);
+        return cal.toInstant().toEpochMilli();
+    }
+
+    public static long nextWeekInMs() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -7);
+        return cal.toInstant().toEpochMilli();
+    }
+
+    public static boolean summonerNameIsDifferent(String dynamoName, String riotName) {
+        if (dynamoName == null || riotName == null) return true;
+        if (dynamoName.isBlank() || riotName.isBlank()) return true;
+        return !dynamoName.equalsIgnoreCase(riotName.trim());
     }
 
     private static Region toRegion(String r) {

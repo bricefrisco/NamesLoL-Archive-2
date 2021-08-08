@@ -3,7 +3,24 @@ package com.nameslol.util;
 import com.nameslol.models.Region;
 import com.nameslol.models.exceptions.BadRequestException;
 
-public final class Validator {
+import java.util.regex.Pattern;
+
+public final class RequestValidator {
+    private static final Pattern PATTERN = Pattern.compile("[^A-Za-z0-9 ]");
+
+    public static boolean isValid(String name) throws Exception {
+        if (name.trim().length() != 6) return false;
+
+        for (char c : name.trim().toCharArray()) {
+            if (!Character.isLetterOrDigit(c)) {
+                System.out.println("Filtering name '" + name + "', contains non-character '" + c + "'");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static void validateRegion(String region) {
         if (region == null || region.isBlank()) throw new BadRequestException("Region cannot be null or blank.");
         try {
