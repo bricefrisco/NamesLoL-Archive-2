@@ -15,10 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
-import java.net.URI;
+import java.io.UnsupportedEncodingException;
+import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 @ApplicationScoped
@@ -42,7 +44,7 @@ public class RiotAPI {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create(String.format(RIOT_API_URI, r.toRiotFormat(), name)))
+                .uri(decodeUrl(String.format(RIOT_API_URI, r.toRiotFormat(), name)))
                 .setHeader("X-Riot-Token", riotApiKey)
                 .build();
 
@@ -68,4 +70,12 @@ public class RiotAPI {
     private boolean unsuccessful(int status) {
         return status < 200 || status >= 300;
     }
+
+    private URI decodeUrl(String encodedUrl) throws UnsupportedEncodingException, MalformedURLException, URISyntaxException {
+        String decodedURL = URLDecoder.decode(encodedUrl, StandardCharsets.UTF_8);
+        URL url = new URL(decodedURL);
+        return new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+    }
+
+
 }
