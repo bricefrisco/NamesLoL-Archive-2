@@ -23,6 +23,7 @@ public class DynamoDBRoute extends RouteBuilder {
                 .setHeader("summoner", simple("${body}"))
                 .bean(RecordMapper.class, "toAttributeValues(${body}, ${headers.region})")
                 .setHeader("CamelAwsDdbItem", simple("${body}"))
+                .bean(RecordMapper.class, "toSummonerResponseDTO(${headers.summoner}, ${headers.region})")
                 .log("Updating summoner: ${headers.name} (${headers.region})")
                 .wireTap("aws2-ddb://lol-summoners-test" +
                         "?operation=PutItem" +
@@ -32,8 +33,7 @@ public class DynamoDBRoute extends RouteBuilder {
                 .choice().when(simple("${headers.isDynamoSummonerName} != null"))
                     .bean(QueryUtil.class, "summonerNameIsDifferent(${headers.name}, ${headers.summoner.name})")
                     .choice().when(simple("${body} == true")).wireTap("direct:delete-summoner").end()
-                .end()
-                .setBody(simple("${headers.summoner}"));
+                .end();
 
 
         from("direct:delete-summoner")

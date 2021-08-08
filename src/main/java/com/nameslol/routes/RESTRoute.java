@@ -1,5 +1,6 @@
 package com.nameslol.routes;
 
+import com.nameslol.models.SummonerResponseDTO;
 import com.nameslol.models.exceptions.BadRequestException;
 import com.nameslol.models.exceptions.RateLimitException;
 import com.nameslol.models.exceptions.RiotAPIException;
@@ -73,7 +74,8 @@ public class RESTRoute extends RouteBuilder {
                     .to("direct:get-summoners")
                     .outType(List.class)
                 .get("/{region}/summoners/{name}")
-                        .to("direct:get-summoner");
+                        .to("direct:get-summoner")
+                        .outType(SummonerResponseDTO.class);
 
 
         from("direct:get-summoners")
@@ -88,7 +90,8 @@ public class RESTRoute extends RouteBuilder {
                     .bean(RequestValidator.class, "validateNameLength(${headers.nameLength})")
                     .to("direct:query-by-name-size")
                 .end()
-                .bean(RecordMapper.class, "toSummonerResponseDTOs");
+                .bean(RecordMapper.class, "toSummonerResponseDTOs")
+                .bean(RecordMapper.class, "toSummonersResponseDTO");
 
         from("direct:get-summoner")
                 .routeId("get-summoner")

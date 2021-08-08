@@ -3,6 +3,7 @@ package com.nameslol.util;
 import com.nameslol.models.Region;
 import com.nameslol.models.SummonerRecordDTO;
 import com.nameslol.models.SummonerResponseDTO;
+import com.nameslol.models.SummonersResponseDTO;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.util.Calendar;
@@ -42,6 +43,19 @@ public final class RecordMapper {
         return req.stream().map(RecordMapper::toSummonerResponseDTO).collect(Collectors.toList());
     }
 
+    public static SummonerResponseDTO toSummonerResponseDTO(SummonerRecordDTO summoner, Region region) {
+        SummonerResponseDTO response = new SummonerResponseDTO();
+        response.setProfileIconId(summoner.getProfileIconId());
+        response.setName(summoner.getName());
+        response.setRegion(region.name());
+        response.setLevel(summoner.getSummonerLevel());
+        response.setRevisionDate(summoner.getRevisionDate());
+        response.setAvailabilityDate(toAvailabilityDate(summoner.getRevisionDate(), summoner.getSummonerLevel()));
+        response.setAccountId(summoner.getAccountId());
+        response.setLastUpdated(System.currentTimeMillis());
+        return response;
+    }
+
     public static SummonerResponseDTO toSummonerResponseDTO(Map<String, AttributeValue> req) {
         SummonerResponseDTO res = new SummonerResponseDTO();
         res.setRegion(req.get("r").s());
@@ -53,6 +67,15 @@ public final class RecordMapper {
         res.setLastUpdated(Long.parseLong(req.get("ld").n()));
         res.setProfileIconId(Integer.parseInt(req.get("pid").n()));
         return res;
+    }
+
+    public static SummonersResponseDTO toSummonersResponseDTO(List<SummonerResponseDTO> summoners) {
+        SummonersResponseDTO response = new SummonersResponseDTO();
+        response.setSummoners(summoners);
+        if (summoners.size() == 0) return response;
+        response.setForwards(summoners.get(summoners.size() - 1).getAvailabilityDate());
+        response.setBackwards(summoners.get(0).getAvailabilityDate());
+        return response;
     }
 
     public static Map<String, AttributeValue> toAttributeMap(String name, String region) {
