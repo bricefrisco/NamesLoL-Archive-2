@@ -53,8 +53,7 @@ public class DataLoaderRoute extends RouteBuilder {
                 .bean(QueryUtil.class, "lastYearInMs")
                 .setHeader("timestamp", simple("${body}"))
                 .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
-                    .log("----- Starting yearly refresh...")
-                    .to("direct:start-year-refresh")
+                .to("direct:start-year-refresh")
                 .end();
 
         from("quartz:week-refresh/br?cron={{dataloader.weekly-refresh-schedule}}")
@@ -64,12 +63,36 @@ public class DataLoaderRoute extends RouteBuilder {
                 .setHeader("sedaRoute", constant("seda:br-queue"))
                 .to("direct:start-week-refresh");
 
+        from("quartz:year-refresh/br?cron={{dataloader.yearly-refresh-schedule}}")
+                .routeId("br-year-refresh")
+                .log("CRON job for br-year-refresh started.")
+                .setHeader("region", constant("BR"))
+                .setHeader("sedaRoute", constant("seda:br-queue"))
+                .setHeader("shouldContinueQueryingLastYear", simple("${true}"))
+                .bean(QueryUtil.class, "lastYearInMs")
+                .setHeader("timestamp", simple("${body}"))
+                .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
+                .to("direct:start-year-refresh")
+                .end();
+
         from("quartz:week-refresh/eune?cron={{dataloader.weekly-refresh-schedule}}")
                 .routeId("eune-week-refresh")
                 .log("CRON job for eune-week-refresh started.")
                 .setHeader("region", constant("EUNE"))
                 .setHeader("sedaRoute", constant("seda:eune-queue"))
                 .to("direct:start-week-refresh");
+
+        from("quartz:year-refresh/eune?cron={{dataloader.yearly-refresh-schedule}}")
+                .routeId("eune-year-refresh")
+                .log("CRON job for eune-year-refresh started.")
+                .setHeader("region", constant("EUNE"))
+                .setHeader("sedaRoute", constant("seda:eune-queue"))
+                .setHeader("shouldContinueQueryingLastYear", simple("${true}"))
+                .bean(QueryUtil.class, "lastYearInMs")
+                .setHeader("timestamp", simple("${body}"))
+                .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
+                .to("direct:start-year-refresh")
+                .end();
 
         from("quartz:week-refresh/euw?cron={{dataloader.weekly-refresh-schedule}}")
                 .routeId("euw-week-refresh")
@@ -78,12 +101,36 @@ public class DataLoaderRoute extends RouteBuilder {
                 .setHeader("sedaRoute", constant("seda:euw-queue"))
                 .to("direct:start-week-refresh");
 
+        from("quartz:year-refresh/euw?cron={{dataloader.yearly-refresh-schedule}}")
+                .routeId("euw-year-refresh")
+                .log("CRON job for euw-year-refresh started.")
+                .setHeader("region", constant("EUW"))
+                .setHeader("sedaRoute", constant("seda:euw-queue"))
+                .setHeader("shouldContinueQueryingLastYear", simple("${true}"))
+                .bean(QueryUtil.class, "lastYearInMs")
+                .setHeader("timestamp", simple("${body}"))
+                .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
+                .to("direct:start-year-refresh")
+                .end();
+
         from("quartz:week-refresh/kr?cron={{dataloader.weekly-refresh-schedule}}")
                 .routeId("kr-week-refresh")
                 .log("CRON job for kr-week-refresh started.")
                 .setHeader("region", constant("KR"))
                 .setHeader("sedaRoute", constant("seda:kr-queue"))
                 .to("direct:start-week-refresh");
+
+        from("quartz:year-refresh/kr?cron={{dataloader.yearly-refresh-schedule}}")
+                .routeId("kr-year-refresh")
+                .log("CRON job for kr-year-refresh started.")
+                .setHeader("region", constant("KR"))
+                .setHeader("sedaRoute", constant("seda:kr-queue"))
+                .setHeader("shouldContinueQueryingLastYear", simple("${true}"))
+                .bean(QueryUtil.class, "lastYearInMs")
+                .setHeader("timestamp", simple("${body}"))
+                .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
+                .to("direct:start-year-refresh")
+                .end();
 
         from("quartz:week-refresh/lan?cron={{dataloader.weekly-refresh-schedule}}")
                 .routeId("lan-week-refresh")
@@ -92,6 +139,18 @@ public class DataLoaderRoute extends RouteBuilder {
                 .setHeader("sedaRoute", constant("seda:lan-queue"))
                 .to("direct:start-week-refresh");
 
+        from("quartz:year-refresh/lan?cron={{dataloader.yearly-refresh-schedule}}")
+                .routeId("lan-year-refresh")
+                .log("CRON job for lan-year-refresh started.")
+                .setHeader("region", constant("LAN"))
+                .setHeader("sedaRoute", constant("seda:lan-queue"))
+                .setHeader("shouldContinueQueryingLastYear", simple("${true}"))
+                .bean(QueryUtil.class, "lastYearInMs")
+                .setHeader("timestamp", simple("${body}"))
+                .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
+                .to("direct:start-year-refresh")
+                .end();
+
         from("quartz:week-refresh/las?cron={{dataloader.weekly-refresh-schedule}}")
                 .routeId("las-week-refresh")
                 .log("CRON job for las-week-refresh started.")
@@ -99,12 +158,36 @@ public class DataLoaderRoute extends RouteBuilder {
                 .setHeader("sedaRoute", constant("seda:las-queue"))
                 .to("direct:start-week-refresh");
 
+        from("quartz:year-refresh/las?cron={{dataloader.yearly-refresh-schedule}}")
+                .routeId("las-year-refresh")
+                .log("CRON job for las-year-refresh started.")
+                .setHeader("region", constant("LAS"))
+                .setHeader("sedaRoute", constant("seda:las-queue"))
+                .setHeader("shouldContinueQueryingLastYear", simple("${true}"))
+                .bean(QueryUtil.class, "lastYearInMs")
+                .setHeader("timestamp", simple("${body}"))
+                .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
+                .to("direct:start-year-refresh")
+                .end();
+
         from("quartz:week-refresh/tr?cron={{dataloader.weekly-refresh-schedule}}")
                 .routeId("tr-week-refresh")
                 .log("CRON job for tr-week-refresh started.")
                 .setHeader("region", constant("TR"))
                 .setHeader("sedaRoute", constant("seda:tr-queue"))
                 .to("direct:start-week-refresh");
+
+        from("quartz:year-refresh/tr?cron={{dataloader.yearly-refresh-schedule}}")
+                .routeId("tr-year-refresh")
+                .log("CRON job for tr-year-refresh started.")
+                .setHeader("region", constant("TR"))
+                .setHeader("sedaRoute", constant("seda:tr-queue"))
+                .setHeader("shouldContinueQueryingLastYear", simple("${true}"))
+                .bean(QueryUtil.class, "lastYearInMs")
+                .setHeader("timestamp", simple("${body}"))
+                .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
+                .to("direct:start-year-refresh")
+                .end();
 
         from("seda:na-queue?concurrentConsumers={{dataloader.concurrent-consumers}}")
                 .routeId("na-queue")
@@ -167,7 +250,7 @@ public class DataLoaderRoute extends RouteBuilder {
                     .setHeader("name", simple("${body.name}"))
                     .toD("${headers.sedaRoute}?blockWhenFull=true");
 
-        from("direct:start-year-refresh")
+        from("direct:continue-year-refresh")
                 .routeId("start-year-refresh")
                 .setHeader("backwards", simple("false"))
                 .to("direct:query-range")
