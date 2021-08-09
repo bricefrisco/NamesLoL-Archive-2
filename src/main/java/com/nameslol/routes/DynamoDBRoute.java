@@ -64,7 +64,11 @@ public class DynamoDBRoute extends RouteBuilder {
                 .setHeader("CamelAwsDdbKeyConditions", simple("${body}"))
                 .setHeader("CamelAwsDdbLimit", simple("{{aws.dynamodb.limit}}"))
                 .setHeader("CamelAwsDdbIndexName", simple("name-length-availability-date-index"))
-                .setHeader("CamelAwsDdbScanIndexForward", simple("!${headers.backwards}"))
+                .choice().when(simple("${headers.backwards} == true"))
+                    .setHeader("CamelAwsDdbScanIndexForward", simple("false"))
+                .otherwise()
+                    .setHeader("CamelAwsDdbScanIndexForward", simple("true"))
+                .end()
                 .to("direct:query");
 
         from("direct:query-between")
@@ -81,7 +85,11 @@ public class DynamoDBRoute extends RouteBuilder {
                 .setHeader("CamelAwsDdbKeyConditions", simple("${body}"))
                 .setHeader("CamelAwsDdbLimit", simple("{{aws.dynamodb.limit}}"))
                 .setHeader("CamelAwsDdbIndexName", simple("region-activation-date-index"))
-                .setHeader("CamelAwsDdbScanIndexForward", simple("!${headers.backwards}"))
+                .choice().when(simple("${headers.backwards} == true"))
+                    .setHeader("CamelAwsDdbScanIndexForward", simple("false"))
+                .otherwise()
+                    .setHeader("CamelAwsDdbScanIndexForward", simple("true"))
+                .end()
                 .to("direct:query");
 
         from("direct:query")

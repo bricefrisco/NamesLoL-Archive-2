@@ -6,10 +6,7 @@ import com.nameslol.models.SummonerResponseDTO;
 import com.nameslol.models.SummonersResponseDTO;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class RecordMapper {
@@ -70,6 +67,8 @@ public final class RecordMapper {
     }
 
     public static SummonersResponseDTO toSummonersResponseDTO(List<SummonerResponseDTO> summoners) {
+        summoners = summoners.stream().sorted(Comparator.comparing(SummonerResponseDTO::getAvailabilityDate)).collect(Collectors.toList());
+
         SummonersResponseDTO response = new SummonersResponseDTO();
         response.setSummoners(summoners);
         if (summoners.size() == 0) return response;

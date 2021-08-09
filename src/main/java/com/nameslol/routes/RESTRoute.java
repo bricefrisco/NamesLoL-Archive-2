@@ -84,7 +84,6 @@ public class RESTRoute extends RouteBuilder {
                 .bean(RequestValidator.class, "validateRegion(${headers.region})")
                 .bean(RequestValidator.class, "validateTimestamp(${headers.timestamp})")
                 .choice().when(simple("${headers.nameLength} == null"))
-                    .log("Querying range")
                     .to("direct:query-range")
                 .otherwise()
                     .bean(RequestValidator.class, "validateNameLength(${headers.nameLength})")
