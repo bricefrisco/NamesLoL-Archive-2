@@ -53,7 +53,7 @@ public class DataLoaderRoute extends RouteBuilder {
                 .bean(QueryUtil.class, "lastYearInMs")
                 .setHeader("timestamp", simple("${body}"))
                 .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
-                .to("direct:start-year-refresh")
+                .to("direct:continue-year-refresh")
                 .end();
 
         from("quartz:week-refresh/br?cron={{dataloader.weekly-refresh-schedule}}")
@@ -72,7 +72,7 @@ public class DataLoaderRoute extends RouteBuilder {
                 .bean(QueryUtil.class, "lastYearInMs")
                 .setHeader("timestamp", simple("${body}"))
                 .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
-                .to("direct:start-year-refresh")
+                .to("direct:continue-year-refresh")
                 .end();
 
         from("quartz:week-refresh/eune?cron={{dataloader.weekly-refresh-schedule}}")
@@ -91,7 +91,7 @@ public class DataLoaderRoute extends RouteBuilder {
                 .bean(QueryUtil.class, "lastYearInMs")
                 .setHeader("timestamp", simple("${body}"))
                 .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
-                .to("direct:start-year-refresh")
+                .to("direct:continue-year-refresh")
                 .end();
 
         from("quartz:week-refresh/euw?cron={{dataloader.weekly-refresh-schedule}}")
@@ -110,7 +110,7 @@ public class DataLoaderRoute extends RouteBuilder {
                 .bean(QueryUtil.class, "lastYearInMs")
                 .setHeader("timestamp", simple("${body}"))
                 .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
-                .to("direct:start-year-refresh")
+                .to("direct:continue-year-refresh")
                 .end();
 
         from("quartz:week-refresh/kr?cron={{dataloader.weekly-refresh-schedule}}")
@@ -129,7 +129,7 @@ public class DataLoaderRoute extends RouteBuilder {
                 .bean(QueryUtil.class, "lastYearInMs")
                 .setHeader("timestamp", simple("${body}"))
                 .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
-                .to("direct:start-year-refresh")
+                .to("direct:continue-year-refresh")
                 .end();
 
         from("quartz:week-refresh/lan?cron={{dataloader.weekly-refresh-schedule}}")
@@ -148,7 +148,7 @@ public class DataLoaderRoute extends RouteBuilder {
                 .bean(QueryUtil.class, "lastYearInMs")
                 .setHeader("timestamp", simple("${body}"))
                 .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
-                .to("direct:start-year-refresh")
+                .to("direct:continue-year-refresh")
                 .end();
 
         from("quartz:week-refresh/las?cron={{dataloader.weekly-refresh-schedule}}")
@@ -167,7 +167,7 @@ public class DataLoaderRoute extends RouteBuilder {
                 .bean(QueryUtil.class, "lastYearInMs")
                 .setHeader("timestamp", simple("${body}"))
                 .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
-                .to("direct:start-year-refresh")
+                .to("direct:continue-year-refresh")
                 .end();
 
         from("quartz:week-refresh/tr?cron={{dataloader.weekly-refresh-schedule}}")
@@ -186,7 +186,7 @@ public class DataLoaderRoute extends RouteBuilder {
                 .bean(QueryUtil.class, "lastYearInMs")
                 .setHeader("timestamp", simple("${body}"))
                 .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
-                .to("direct:start-year-refresh")
+                .to("direct:continue-year-refresh")
                 .end();
 
         from("seda:na-queue?concurrentConsumers={{dataloader.concurrent-consumers}}")
@@ -251,7 +251,7 @@ public class DataLoaderRoute extends RouteBuilder {
                     .toD("${headers.sedaRoute}?blockWhenFull=true");
 
         from("direct:continue-year-refresh")
-                .routeId("start-year-refresh")
+                .routeId("continue-year-refresh")
                 .setHeader("backwards", simple("false"))
                 .to("direct:query-range")
                 .bean(RecordMapper.class, "toSummonerResponseDTOs")
