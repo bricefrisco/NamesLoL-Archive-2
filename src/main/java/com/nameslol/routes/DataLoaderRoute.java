@@ -44,6 +44,19 @@ public class DataLoaderRoute extends RouteBuilder {
                 .setHeader("sedaRoute", constant("seda:na-queue"))
                 .to("direct:start-week-refresh");
 
+        from("quartz:year-refresh/na?cron={{dataloader.yearly-refresh-schedule}}")
+                .routeId("na-year-refresh")
+                .log("CRON job for na-year-refresh started.")
+                .setHeader("region", constant("NA"))
+                .setHeader("sedaRoute", constant("seda:na-queue"))
+                .setHeader("shouldContinueQueryingLastYear", simple("${true}"))
+                .bean(QueryUtil.class, "lastYearInMs")
+                .setHeader("timestamp", simple("${body}"))
+                .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
+                    .log("----- Starting yearly refresh...")
+                    .to("direct:start-year-refresh")
+                .end();
+
         from("quartz:week-refresh/br?cron={{dataloader.weekly-refresh-schedule}}")
                 .routeId("br-week-refresh")
                 .log("CRON job for br-week-refresh started.")
@@ -148,11 +161,27 @@ public class DataLoaderRoute extends RouteBuilder {
                 .bean(QueryUtil.class, "nextWeekInMs")
                 .setHeader("t1", simple("${body}"))
                 .to("direct:query-between")
-                    .bean(RecordMapper.class, "toSummonerResponseDTOs")
-                    .split().body()
+                .bean(RecordMapper.class, "toSummonerResponseDTOs")
+                .split().body()
                     .setHeader("isDynamoSummonerName", simple("true"))
                     .setHeader("name", simple("${body.name}"))
                     .toD("${headers.sedaRoute}?blockWhenFull=true");
+
+        from("direct:start-year-refresh")
+                .routeId("start-year-refresh")
+                .setHeader("backwards", simple("false"))
+                .to("direct:query-range")
+                .bean(RecordMapper.class, "toSummonerResponseDTOs")
+                .bean(RecordMapper.class, "toSummonersResponseDTO")
+                .setHeader("ySummoners", simple("${body}"))
+                .bean(QueryUtil.class, "shouldContinueQueryingLastYear")
+                .setHeader("shouldContinueQueryingLastYear", simple("${body}"))
+                .setHeader("timestamp", simple("${headers.ySummoners.forwards}"))
+                .split().simple("${headers.ySummoners.summoners}")
+                    .setHeader("isDynamoSummonerName", simple("true"))
+                    .setHeader("name", simple("${body.name}"))
+                    .toD("${headers.sedaRoute}?blockWhenFull=true");
+
 
     }
 }

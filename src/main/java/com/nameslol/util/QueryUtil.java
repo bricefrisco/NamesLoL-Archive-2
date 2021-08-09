@@ -1,6 +1,7 @@
 package com.nameslol.util;
 
 import com.nameslol.models.Region;
+import com.nameslol.models.SummonersResponseDTO;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
@@ -64,10 +65,26 @@ public final class QueryUtil {
         return cal.toInstant().toEpochMilli();
     }
 
+    public static long lastYearInMs() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, -1);
+        return cal.toInstant().toEpochMilli();
+    }
+
     public static boolean summonerNameIsDifferent(String dynamoName, String riotName) {
         if (dynamoName == null || riotName == null) return true;
         if (dynamoName.isBlank() || riotName.isBlank()) return true;
         return !dynamoName.equalsIgnoreCase(riotName.trim());
+    }
+
+    public static boolean shouldContinueQueryingLastYear(SummonersResponseDTO response) {
+        return response.getSummoners() != null &&
+                response.getSummoners().size() > 1 &&
+                response.getForwards() < System.currentTimeMillis();
+    }
+
+    public static boolean shouldContinueQueryingAll(SummonersResponseDTO response) {
+        return response.getSummoners() != null && response.getSummoners().size() > 1;
     }
 
     private static Region toRegion(String r) {
@@ -78,6 +95,4 @@ public final class QueryUtil {
             throw new IllegalArgumentException("'" + r + "' is an invalid region.");
         }
     }
-
-
 }
