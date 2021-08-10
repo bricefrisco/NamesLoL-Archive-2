@@ -15,9 +15,6 @@ public class DynamoDBRoute extends RouteBuilder {
 
         from("direct:update-summoner")
                 .routeId("update-summoner")
-                .onException(Exception.class)
-                    .handled(Boolean.TRUE)
-                    .log(LoggingLevel.WARN, "${exception.message}")
                 .end()
                 .to("bean:riotAPI?method=fetchSummonerName(${headers.name}, ${headers.region})")
                 .setHeader("summoner", simple("${body}"))
@@ -40,9 +37,6 @@ public class DynamoDBRoute extends RouteBuilder {
 
         from("direct:delete-summoner")
                 .routeId("delete-summoner")
-                .onException(Exception.class)
-                    .handled(Boolean.TRUE)
-                    .log(LoggingLevel.WARN, "${exception.message}")
                 .end()
                 .bean(RecordMapper.class, "toAttributeMap(${headers.name}, ${headers.region})")
                 .setHeader("CamelAwsDdbKey", simple("${body}"))

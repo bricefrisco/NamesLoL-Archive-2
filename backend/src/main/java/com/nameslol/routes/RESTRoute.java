@@ -51,7 +51,7 @@ public class RESTRoute extends RouteBuilder {
                 .log("RiotAPIException handled: ${exception.message}")
                 .bean(ErrorResponseGenerator.class, "generate(${exception.message}, 500)");
 
-        onException(Exception.class)
+        onException(RuntimeException.class)
                 .handled(Boolean.TRUE)
                 .setHeader(Exchange.HTTP_RESPONSE_CODE, constant("500"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
