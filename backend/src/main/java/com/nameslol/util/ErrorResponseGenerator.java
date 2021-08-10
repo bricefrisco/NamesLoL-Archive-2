@@ -5,8 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nameslol.models.exceptions.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 import java.sql.Timestamp;
 
+@ApplicationScoped
+@Named("errorResponseGenerator")
 public final class ErrorResponseGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorResponseGenerator.class);
     public static ObjectMapper MAPPER = new ObjectMapper();

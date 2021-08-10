@@ -3,7 +3,6 @@ package com.nameslol.routes;
 import com.nameslol.util.QueryUtil;
 import com.nameslol.util.RecordMapper;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 
 @RegisterForReflection

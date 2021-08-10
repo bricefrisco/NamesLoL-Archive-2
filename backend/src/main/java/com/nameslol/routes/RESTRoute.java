@@ -28,28 +28,28 @@ public class RESTRoute extends RouteBuilder {
                 .setHeader(Exchange.HTTP_RESPONSE_CODE, constant("404"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .log("SummonerNotFound exception handled: ${exception.message}")
-                .bean(ErrorResponseGenerator.class, "generate(${exception.message}, 404)");
+                .to("bean:errorResponseGenerator?method=generate(${exception.message}, 404)");
 
         onException(BadRequestException.class)
                 .handled(Boolean.TRUE)
                 .setHeader(Exchange.HTTP_RESPONSE_CODE, constant("400"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .log("InvalidRequest exception handled: ${exception.message}")
-                .bean(ErrorResponseGenerator.class, "generate(${exception.message}, 400)");
+                .to("bean:errorResponseGenerator?method=generate(${exception.message}, 400)");
 
         onException(RateLimitException.class)
                 .handled(Boolean.TRUE)
                 .setHeader(Exchange.HTTP_RESPONSE_CODE, constant("429"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .log("RateLimit exception handled: ${exception.message}")
-                .bean(ErrorResponseGenerator.class, "generate(${exception.message}, 429)");
+                .to("bean:errorResponseGenerator?method=generate(${exception.message}, 429)");
 
         onException(RiotAPIException.class)
                 .handled(Boolean.TRUE)
                 .setHeader(Exchange.HTTP_RESPONSE_CODE, constant("500"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .log("RiotAPIException handled: ${exception.message}")
-                .bean(ErrorResponseGenerator.class, "generate(${exception.message}, 500)");
+                .to("bean:errorResponseGenerator?method=generate(${exception.message}, 500)");
 
         onException(RuntimeException.class)
                 .handled(Boolean.TRUE)
@@ -57,7 +57,7 @@ public class RESTRoute extends RouteBuilder {
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .log(LoggingLevel.ERROR, "${exception.message}")
                 .log(LoggingLevel.ERROR, "${exception.stacktrace}")
-                .bean(ErrorResponseGenerator.class, "generate(${exception.message}, 500)");
+                .to("bean:errorResponseGenerator?method=generate(${exception.message}, 500)");
 
         restConfiguration()
                 .host("{{rest.host}}").port("{{rest.port}}")
