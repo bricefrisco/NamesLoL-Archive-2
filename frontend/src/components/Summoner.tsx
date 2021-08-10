@@ -12,7 +12,6 @@ import {
 } from "../state/summonerSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {Close} from "@material-ui/icons";
-import {Alert} from "@material-ui/lab";
 
 export interface SummonerData {
   id: string;
@@ -45,11 +44,11 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   available: {
-    backgroundColor: "rgb(61,177,128)",
+    backgroundColor: "rgba(61,177,128, 0.5)",
     color: "#fff"
   },
   unavailable: {
-    backgroundColor: "rgb(255,152,0)",
+    backgroundColor: '#cd7b00',
     '& > button': {
       color: 'black'
     }
@@ -89,10 +88,16 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   alert: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '20px',
+    borderRadius: 5,
+    backgroundColor: 'rgba(255,0,0,0.35)',
+    color: 'white',
     marginTop: theme.spacing(2)
   },
   link: {
-    color: '#0d6efd',
+    color: 'rgb(0,135,246)',
     textDecoration: 'none',
     '&:hover': {
       textDecoration: 'underline',
@@ -116,12 +121,19 @@ const Summoner = () => {
 
   if (error) {
     return (
-        <Alert severity='error' className={classes.alert}>
-          Oh no! An error occurred: '{errorMessage}'<br />
-          Please <span className={classes.link} onClick={() => dispatch(fetchSummoner())}>try again.</span>{' '}
-          If the issue persists, please let us know{' '}
-          <a className={classes.link} target='_blank' rel='noreferrer noopener' href='https://github.com/bricefrisco/LoLNames/issues/new'>here.</a>
-        </Alert>
+        <Collapse in={open}>
+            <div className={`${classes.alert}`}>
+              <div>
+                Oh no! An error occurred: '{errorMessage}'<br />
+                Please <span className={classes.link} onClick={() => dispatch(fetchSummoner())}>try again.</span>{' '}
+                If the issue persists, please let us know{' '}
+                <a className={classes.link} target='_blank' rel='noreferrer noopener' href='https://github.com/bricefrisco/LoLNames/issues/new'>here.</a>
+              </div>
+              <IconButton size='small' onClick={() => dispatch(close())}>
+                <Close />
+              </IconButton>
+            </div>
+        </Collapse>
     )
   }
 

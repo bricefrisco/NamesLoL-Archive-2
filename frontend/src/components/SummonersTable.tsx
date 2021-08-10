@@ -21,7 +21,6 @@ import {
 import Moment from "react-moment";
 import moment from "moment";
 import UpdateButton from "./UpdateButton";
-import {Alert} from "@material-ui/lab";
 
 interface Summoner {
   region: string;
@@ -71,7 +70,11 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   alert: {
-    margin: theme.spacing(3)
+    padding: '15px',
+    borderRadius: 5,
+    backgroundColor: 'rgba(255,0,0,0.35)',
+    color: 'white',
+    marginTop: theme.spacing(2)
   },
   loading: {
     backgroundColor: '#2e609c',
@@ -100,12 +103,12 @@ const SummonersTable = () => {
 
   if (error) {
     return (
-        <Alert severity='error' className={classes.alert}>
-          Oh no! An error occurred: '{errorMessage}'<br />
-          Please <span className={classes.link} onClick={() => dispatch(fetchSummoners(new Date().valueOf(), false))}>try again.</span>{' '}
-          If the issue persists, please let us know{' '}
-          <a className={classes.link} target='_blank' rel='noreferrer noopener' href='https://github.com/bricefrisco/LoLNames/issues/new'>here.</a>
-        </Alert>
+        <div className={`${classes.alert}`}>
+            Oh no! An error occurred: '{errorMessage}'<br />
+            Please <span className={classes.link} onClick={() => dispatch(fetchSummoners(new Date().valueOf(), false))}>try again.</span>{' '}
+            If the issue persists, please let us know{' '}
+            <a className={classes.link} target='_blank' rel='noreferrer noopener' href='https://github.com/bricefrisco/LoLNames/issues/new'>here.</a>
+        </div>
     )
   }
 
