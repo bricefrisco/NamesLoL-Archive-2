@@ -12,6 +12,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import javax.ws.rs.WebApplicationException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 @ApplicationScoped
 @Named("riotAPI")
@@ -26,7 +27,7 @@ public class RiotService {
         return str.trim().toUpperCase();
     }
 
-    public SummonerRecordDTO fetchSummonerName(String name, String region) throws Exception {
+    public SummonerRecordDTO fetchSummonerName(String name, String region) throws URISyntaxException {
         Region r = Region.valueOf(region.toUpperCase());
         RiotAPI riotAPI = RestClientBuilder.newBuilder()
                 .baseUri(new URI(String.format(RIOT_API_URI, r.toRiotFormat())))
