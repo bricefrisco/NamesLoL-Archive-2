@@ -6,9 +6,13 @@ import com.nameslol.models.SummonerResponseDTO;
 import com.nameslol.models.SummonersResponseDTO;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@ApplicationScoped
+@Named("recordMapper")
 public final class RecordMapper {
     public static long toAvailabilityDate(long revisionDate, int level) {
         Calendar calendar = Calendar.getInstance();

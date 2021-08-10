@@ -3,8 +3,12 @@ package com.nameslol.util;
 import com.nameslol.models.Region;
 import com.nameslol.models.exceptions.BadRequestException;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 import java.util.regex.Pattern;
 
+@ApplicationScoped
+@Named("requestValidator")
 public final class RequestValidator {
     private static final Pattern PATTERN = Pattern.compile("[^A-Za-z0-9 ]");
 

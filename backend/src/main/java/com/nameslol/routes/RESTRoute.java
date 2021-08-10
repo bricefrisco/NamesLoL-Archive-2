@@ -80,25 +80,25 @@ public class RESTRoute extends RouteBuilder {
 
         from("direct:get-summoners")
                 .routeId("get-summoners")
-                .bean(RESTUtil.class, "logRequest(*)")
-                .bean(RequestValidator.class, "validateRegion(${headers.region})")
-                .bean(RequestValidator.class, "validateTimestamp(${headers.timestamp})")
+                .to("bean:restUtil?method=logRequest(*)")
+                .to("bean:requestValidator?method=validateRegion(${headers.region})")
+                .to("bean:requestValidator?method=validateTimestamp(${headers.timestamp})")
                 .choice().when(simple("${headers.nameLength} == null"))
                     .to("direct:query-range")
                 .otherwise()
-                    .bean(RequestValidator.class, "validateNameLength(${headers.nameLength})")
+                    .to("bean:requestValidator?method=validateNameLength(${headers.nameLength})")
                     .to("direct:query-by-name-size")
                 .end()
-                .bean(RecordMapper.class, "toSummonerResponseDTOs")
-                .bean(RecordMapper.class, "toSummonersResponseDTO");
+                .to("bean:recordMapper?method=toSummonerResponseDTOs")
+                .to("bean:recordMapper?method=toSummonersResponseDTO");
 
         from("direct:get-summoner")
                 .routeId("get-summoner")
-                .bean(RESTUtil.class, "logRequest(*)")
-                .bean(RESTUtil.class, "toIP(*)")
-                .bean("restRateLimiter", "checkIsLimited(${body})")
-                .bean(RequestValidator.class, "validateRegion(${headers.region})")
-                .bean(RequestValidator.class, "validateName(${headers.name})")
+                .to("bean:restUtil?method=logRequest(*)")
+                .to("bean:restUtil?method=toIP(*)")
+                .to("bean:restRateLimiter?method=checkIsLimited(${body})")
+                .to("bean:requestValidator?method=validateRegion(${headers.region})")
+                .to("bean:requestValidator?method=validateName(${headers.name})")
                 .to("direct:update-summoner");
     }
 }

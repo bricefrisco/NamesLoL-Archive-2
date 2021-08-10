@@ -6,10 +6,14 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+@ApplicationScoped
+@Named("queryUtil")
 public final class QueryUtil {
     public static Map<String, Condition> byName(String name, String region) {
         Map<String, Condition> query = new HashMap<>();

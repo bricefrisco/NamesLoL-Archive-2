@@ -4,6 +4,11 @@ import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
+
+@ApplicationScoped
+@Named("restUtil")
 public final class RESTUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(RESTUtil.class);
 

@@ -17,9 +17,9 @@ public class DynamoDBRoute extends RouteBuilder {
                 .end()
                 .to("bean:riotAPI?method=fetchSummonerName(${headers.name}, ${headers.region})")
                 .setHeader("summoner", simple("${body}"))
-                .bean(RecordMapper.class, "toAttributeValues(${body}, ${headers.region})")
+                .to("bean:recordMapper?method=toAttributeValues(${body}, ${headers.region})")
                 .setHeader("CamelAwsDdbItem", simple("${body}"))
-                .bean(RecordMapper.class, "toSummonerResponseDTO(${headers.summoner}, ${headers.region})")
+                .to("bean:recordMapper?method=toSummonerResponseDTO(${headers.summoner}, ${headers.region})")
                 .choice().when(simple("${headers.hideSearch} != true"))
                     .log("Updating summoner: ${headers.name} (${headers.region})")
                     .wireTap("aws2-ddb://lol-summoners-test" +
@@ -28,7 +28,7 @@ public class DynamoDBRoute extends RouteBuilder {
                         "&secretKey=RAW({{aws.secret-key}})" +
                         "&region={{aws.region}}")
                     .choice().when(simple("${headers.isDynamoSummonerName} != null"))
-                        .bean(QueryUtil.class, "summonerNameIsDifferent(${headers.name}, ${headers.summoner.name})")
+                        .to("bean:queryUtil?method=summonerNameIsDifferent(${headers.name}, ${headers.summoner.name})")
                         .choice().when(simple("${body} == true")).wireTap("direct:delete-summoner").end()
                     .end()
                 .end();
@@ -37,7 +37,7 @@ public class DynamoDBRoute extends RouteBuilder {
         from("direct:delete-summoner")
                 .routeId("delete-summoner")
                 .end()
-                .bean(RecordMapper.class, "toAttributeMap(${headers.name}, ${headers.region})")
+                .to("bean:recordMapper?method=toAttributeMap(${headers.name}, ${headers.region})")
                 .setHeader("CamelAwsDdbKey", simple("${body}"))
                 .to("aws2-ddb://lol-summoners-test" +
                         "?operation=DeleteItem" +
@@ -49,13 +49,13 @@ public class DynamoDBRoute extends RouteBuilder {
 
         from("direct:query-by-name")
                 .routeId("query-by-name")
-                .bean(QueryUtil.class, "byName(${headers.name}, ${headers.region})")
+                .to("bean:queryUtil?method=byName(${headers.name}, ${headers.region})")
                 .setHeader("CamelAwsDdbKeyConditions", simple("${body}"))
                 .to("direct:query");
 
         from("direct:query-by-name-size")
                 .routeId("query-by-name-size")
-                .bean(QueryUtil.class, "byNameSize(${headers.region}, ${headers.timestamp}, ${headers.backwards}, ${headers.nameLength})")
+                .to("bean:queryUtil?method=byNameSize(${headers.region}, ${headers.timestamp}, ${headers.backwards}, ${headers.nameLength})")
                 .setHeader("CamelAwsDdbKeyConditions", simple("${body}"))
                 .setHeader("CamelAwsDdbLimit", simple("{{aws.dynamodb.limit}}"))
                 .setHeader("CamelAwsDdbIndexName", simple("name-length-availability-date-index"))
@@ -68,7 +68,7 @@ public class DynamoDBRoute extends RouteBuilder {
 
         from("direct:query-between")
                 .routeId("query-between")
-                .bean(QueryUtil.class, "between(${headers.region}, ${headers.t1}, ${headers.t2})")
+                .to("bean:queryUtil?method=tween(${headers.region}, ${headers.t1}, ${headers.t2})")
                 .setHeader("CamelAwsDdbKeyConditions", simple("${body}"))
                 .setHeader("CamelAwsDdbLimit", simple("{{dataloader.query-range-limit}}"))
                 .setHeader("CamelAwsDdbIndexName", simple("region-activation-date-index"))
@@ -76,7 +76,7 @@ public class DynamoDBRoute extends RouteBuilder {
 
         from("direct:query-range")
                 .routeId("query-range")
-                .bean(QueryUtil.class, "range(${headers.region}, ${headers.timestamp}, ${headers.backwards})")
+                .to("bean:queryUtil?method=range(${headers.region}, ${headers.timestamp}, ${headers.backwards})")
                 .setHeader("CamelAwsDdbKeyConditions", simple("${body}"))
                 .setHeader("CamelAwsDdbLimit", simple("{{aws.dynamodb.limit}}"))
                 .setHeader("CamelAwsDdbIndexName", simple("region-activation-date-index"))
