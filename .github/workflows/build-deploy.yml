@@ -37,7 +37,7 @@ jobs:
           echo rest.host=0.0.0.0 >> application.properties
           echo rest.port=8081 >> application.properties
           echo rest.throttle-ms=1300 >> application.properties
-          echo quarkus.native.additional-build-args=--initialize-at-run-time=java.net.http.HttpClient
+          echo quarkus.arc.unremovable-types=java.lang.**
 
       - name: BACKEND Build a native executable
         run: mvn -f backend/pom.xml clean package -Pnative -Dquarkus.native.container-build=true
