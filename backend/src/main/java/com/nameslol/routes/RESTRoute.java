@@ -5,10 +5,6 @@ import com.nameslol.models.exceptions.BadRequestException;
 import com.nameslol.models.exceptions.RateLimitException;
 import com.nameslol.models.exceptions.RiotAPIException;
 import com.nameslol.models.exceptions.SummonerNotFoundException;
-import com.nameslol.util.ErrorResponseGenerator;
-import com.nameslol.util.RESTUtil;
-import com.nameslol.util.RecordMapper;
-import com.nameslol.util.RequestValidator;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -51,7 +47,7 @@ public class RESTRoute extends RouteBuilder {
                 .log("RiotAPIException handled: ${exception.message}")
                 .to("bean:errorResponseGenerator?method=generate(${exception.message}, 500)");
 
-        onException(RuntimeException.class)
+        onException(Exception.class)
                 .handled(Boolean.TRUE)
                 .setHeader(Exchange.HTTP_RESPONSE_CODE, constant("500"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
