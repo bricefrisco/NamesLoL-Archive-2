@@ -1,7 +1,6 @@
 package com.nameslol.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nameslol.models.Region;
 import com.nameslol.models.SummonerRecordDTO;
@@ -21,7 +20,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.regex.Pattern;
 
 @ApplicationScoped
 @Named("riotAPI")
