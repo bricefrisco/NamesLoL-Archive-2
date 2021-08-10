@@ -24,15 +24,17 @@ public class DynamoDBRoute extends RouteBuilder {
                 .bean(RecordMapper.class, "toAttributeValues(${body}, ${headers.region})")
                 .setHeader("CamelAwsDdbItem", simple("${body}"))
                 .bean(RecordMapper.class, "toSummonerResponseDTO(${headers.summoner}, ${headers.region})")
-                .log("Updating summoner: ${headers.name} (${headers.region})")
-                .wireTap("aws2-ddb://lol-summoners-test" +
+                .choice().when(simple("${headers.hideSearch} != true"))
+                    .log("Updating summoner: ${headers.name} (${headers.region})")
+                    .wireTap("aws2-ddb://lol-summoners-test" +
                         "?operation=PutItem" +
                         "&accessKey=RAW({{aws.access-key}})" +
                         "&secretKey=RAW({{aws.secret-key}})" +
                         "&region={{aws.region}}")
-                .choice().when(simple("${headers.isDynamoSummonerName} != null"))
-                    .bean(QueryUtil.class, "summonerNameIsDifferent(${headers.name}, ${headers.summoner.name})")
-                    .choice().when(simple("${body} == true")).wireTap("direct:delete-summoner").end()
+                    .choice().when(simple("${headers.isDynamoSummonerName} != null"))
+                        .bean(QueryUtil.class, "summonerNameIsDifferent(${headers.name}, ${headers.summoner.name})")
+                        .choice().when(simple("${body} == true")).wireTap("direct:delete-summoner").end()
+                    .end()
                 .end();
 
 
