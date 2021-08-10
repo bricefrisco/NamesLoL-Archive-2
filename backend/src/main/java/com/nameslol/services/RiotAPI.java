@@ -1,79 +1,22 @@
 package com.nameslol.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nameslol.models.Region;
 import com.nameslol.models.SummonerRecordDTO;
-import com.nameslol.models.exceptions.RiotAPIException;
-import com.nameslol.models.exceptions.RiotException;
-import com.nameslol.models.exceptions.SummonerNotFoundException;
-import io.quarkus.runtime.annotations.RegisterForReflection;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
+import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
-import java.io.UnsupportedEncodingException;
-import java.net.*;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-@ApplicationScoped
-@Named("riotAPI")
-@RegisterForReflection
-public class RiotAPI {
-    private static final HttpClient CLIENT = HttpClient.newHttpClient();
-    private static final String RIOT_API_URI = "https://%s.api.riotgames.com/lol/summoner/v4/summoners/by-name/%s";
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final Logger LOGGER = LoggerFactory.getLogger(RiotAPI.class);
+@Path("/lol/summoner/v4")
+@RegisterRestClient
+@RegisterClientHeaders(RiotAPIHeaders.class)
+public interface RiotAPI {
 
-    @ConfigProperty(name = "riot.api-key")
-    String riotApiKey;
-
-    public String format(String str) {
-        return str.trim().toUpperCase();
-    }
-
-    public SummonerRecordDTO fetchSummonerName(String name, String region) throws Exception {
-        Region r = Region.valueOf(region.toUpperCase());
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .uri(decodeUrl(String.format(RIOT_API_URI, r.toRiotFormat(), name)))
-                .setHeader("X-Riot-Token", riotApiKey)
-                .build();
-
-        HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (unsuccessful(response.statusCode())) {
-            try {
-                RiotException exception = MAPPER.readValue(response.body(), RiotException.class);
-                if (response.statusCode() == 404) {
-                    throw new SummonerNotFoundException(exception.getStatus().getMessage());
-                } else {
-                    throw new RiotAPIException(exception.getStatus().getMessage());
-                }
-            } catch (JsonProcessingException e) {
-                LOGGER.info(e.getMessage());
-                throw new RiotAPIException("Exception received from RIOT api, could not parse response: " + response.body());
-            }
-        }
-
-        return MAPPER.readValue(response.body(), SummonerRecordDTO.class);
-    }
-
-    private boolean unsuccessful(int status) {
-        return status < 200 || status >= 300;
-    }
-
-    private URI decodeUrl(String encodedUrl) throws UnsupportedEncodingException, MalformedURLException, URISyntaxException {
-        String decodedURL = URLDecoder.decode(encodedUrl, StandardCharsets.UTF_8);
-        URL url = new URL(decodedURL);
-        return new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
-    }
-
-
+    @GET
+    @Path("/summoners/by-name/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    SummonerRecordDTO getSummoner(@PathParam("name") String name);
 }
