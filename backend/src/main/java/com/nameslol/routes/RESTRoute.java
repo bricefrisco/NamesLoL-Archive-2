@@ -55,6 +55,9 @@ public class RESTRoute extends RouteBuilder {
                 .enableCORS(Boolean.TRUE);
 
         rest()
+                .get("/health")
+                    .to("direct:health-check")
+                    .outType(String.class)
                 .get("/{region}/summoners")
                     .param().name("timestamp").type(RestParamType.query).required(Boolean.TRUE).dataType("long").endParam()
                     .param().name("backwards").type(RestParamType.query).required(Boolean.FALSE).defaultValue("false").dataType("bool").endParam()
@@ -62,8 +65,11 @@ public class RESTRoute extends RouteBuilder {
                     .to("direct:get-summoners")
                     .outType(List.class)
                 .get("/{region}/summoners/{name}")
-                        .to("direct:get-summoner")
-                        .outType(SummonerResponseDTO.class);
+                    .to("direct:get-summoner")
+                    .outType(SummonerResponseDTO.class);
+
+        from("direct:health-check")
+                .setBody(constant("OK"));
 
 
         from("direct:get-summoners")
