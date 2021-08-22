@@ -63,7 +63,7 @@ export const fetchSummoner = () => (dispatch: any, getState: any) => {
     .then(parseResponse)
     .then((summoner) => dispatch(loaded(summoner)))
     .catch((err) => {
-      if (err.toString().includes('summoner not found')) {
+      if (err.toString().toLowerCase().includes('summoner not found')) {
         dispatch(loaded({
           name,
           region
