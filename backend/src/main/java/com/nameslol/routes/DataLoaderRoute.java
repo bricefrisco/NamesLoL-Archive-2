@@ -25,7 +25,7 @@ public class DataLoaderRoute extends RouteBuilder {
         from("{{dataloader.input-file}}")
                 .routeId("input-loader")
                 .split().tokenize("\n")
-                    .filter().method(RequestValidator.class, "isValid")
+                    .filter().method("requestValidator", "isValid")
                     .to("bean:riotAPI?method=format")
                     .setHeader("name", simple("${body}"))
                     .wireTap("seda:na-queue?blockWhenFull=true")
