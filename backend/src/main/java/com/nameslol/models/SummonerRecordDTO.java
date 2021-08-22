@@ -1,5 +1,8 @@
 package com.nameslol.models;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
+@RegisterForReflection
 public class SummonerRecordDTO {
     private String id;
     private String accountId;
