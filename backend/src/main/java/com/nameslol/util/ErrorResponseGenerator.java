@@ -3,6 +3,7 @@ package com.nameslol.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nameslol.models.exceptions.ErrorResponse;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +13,7 @@ import java.sql.Timestamp;
 
 @ApplicationScoped
 @Named("errorResponseGenerator")
+@RegisterForReflection
 public class ErrorResponseGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorResponseGenerator.class);
     public static ObjectMapper MAPPER = new ObjectMapper();

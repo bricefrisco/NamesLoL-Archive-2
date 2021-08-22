@@ -1,5 +1,6 @@
 package com.nameslol.util;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import javax.inject.Named;
 
 @ApplicationScoped
 @Named("restUtil")
+@RegisterForReflection
 public class RESTUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(RESTUtil.class);
 

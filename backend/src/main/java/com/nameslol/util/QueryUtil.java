@@ -2,6 +2,7 @@ package com.nameslol.util;
 
 import com.nameslol.models.Region;
 import com.nameslol.models.SummonersResponseDTO;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 @ApplicationScoped
 @Named("queryUtil")
+@RegisterForReflection
 public class QueryUtil {
     public Map<String, Condition> byName(String name, String region) {
         Map<String, Condition> query = new HashMap<>();

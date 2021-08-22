@@ -4,6 +4,7 @@ import com.nameslol.models.Region;
 import com.nameslol.models.SummonerRecordDTO;
 import com.nameslol.models.SummonerResponseDTO;
 import com.nameslol.models.SummonersResponseDTO;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Named("recordMapper")
+@RegisterForReflection
 public class RecordMapper {
     public long toAvailabilityDate(long revisionDate, int level) {
         Calendar calendar = Calendar.getInstance();
