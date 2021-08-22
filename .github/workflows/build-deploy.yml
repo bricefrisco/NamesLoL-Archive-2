@@ -25,7 +25,7 @@ jobs:
           echo riot.api-key=${{ secrets.RIOT_API_KEY }} >> application.properties
           echo dataloader.input-file=file:/home/jboss/dataloader?filename=input.txt >> application.properties
           echo dataloader.throttle-per-second=10 >> application.properties
-          echo dataloader.weekly-refresh-schedule=0+0+0+1+*+? >> application.properties
+          echo dataloader.weekly-refresh-schedule=0+0+*+*+*+? >> application.properties
           echo dataloader.yearly-refresh-schedule=0+0+0+?+*+FRI >> application.properties
           echo dataloader.complete-refresh-schedule=0+0+0+1+*+? >> application.properties
           echo dataloader.query-range-limit=8000 >> application.properties
