@@ -9,6 +9,9 @@ public class SummonerRecordDTO {
     private long revisionDate;
     private int summonerLevel;
 
+    public SummonerRecordDTO() {
+    }
+
     public String getId() {
         return id;
     }

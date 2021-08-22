@@ -13,6 +13,9 @@ public class SummonerResponseDTO {
     private Long lastUpdated;
     private Integer profileIconId;
 
+    public SummonerResponseDTO() {
+    }
+
     public String getName() {
         return name;
     }

@@ -10,6 +10,9 @@ public class SummonersResponseDTO {
     private long backwards;
     private long forwards;
 
+    public SummonersResponseDTO() {
+    }
+
     public List<SummonerResponseDTO> getSummoners() {
         return summoners;
     }
