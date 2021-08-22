@@ -2,6 +2,7 @@ package com.nameslol.util;
 
 import com.nameslol.models.Region;
 import com.nameslol.models.exceptions.BadRequestException;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -9,10 +10,11 @@ import java.util.regex.Pattern;
 
 @ApplicationScoped
 @Named("requestValidator")
-public final class RequestValidator {
+@RegisterForReflection
+public class RequestValidator {
     private static final Pattern PATTERN = Pattern.compile("[^A-Za-z0-9 ]");
 
-    public static boolean isValid(String name) {
+    public boolean isValid(String name) {
         if (name.trim().length() != 6) return false;
 
         for (char c : name.trim().toCharArray()) {
@@ -25,7 +27,7 @@ public final class RequestValidator {
         return true;
     }
 
-    public static void validateRegion(String region) {
+    public void validateRegion(String region) {
         if (region == null || region.isBlank()) throw new BadRequestException("Region cannot be null or blank.");
         try {
             Region r = Region.valueOf(region.toUpperCase());
@@ -34,16 +36,16 @@ public final class RequestValidator {
         }
     }
 
-    public static void validateTimestamp(long timestamp) {
+    public void validateTimestamp(long timestamp) {
         if (timestamp == 0) throw new BadRequestException("Timestamp cannot be 0.");
         if (timestamp < 1) throw new BadRequestException("Timestamp cannot be negative.");
     }
 
-    public static void validateNameLength(int nameLength) {
+    public void validateNameLength(int nameLength) {
         if (nameLength < 3) throw new BadRequestException("Name length must be at least 3.");
     }
 
-    public static void validateName(String name) {
+    public void validateName(String name) {
         if (name == null || name.isBlank()) throw new BadRequestException("Name cannot be null or empty.");
         if (name.length() < 3) throw new BadRequestException("Name length must be at least 3.");
     }
