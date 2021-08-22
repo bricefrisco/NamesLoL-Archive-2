@@ -50,11 +50,11 @@ jobs:
       - name: BACKEND Update fargate service
         run: aws ecs update-service --cluster ${{ secrets.AWS_CLUSTER_NAME }} --service ${{ secrets.AWS_SERVICE_NAME }} --force-new-deployment
 
-      - name: FRONTEND Install dependencies
-        run: cd frontend && npm install
-
-      - name: FRONTEND Webpack
-        run: cd frontend && CI= npm run build
-
-      - name: FRONTEND Deploy to S3
-        run: aws s3 sync frontend/build s3://nameslol
+#      - name: FRONTEND Install dependencies
+#        run: cd frontend && npm install
+#
+#      - name: FRONTEND Webpack
+#        run: cd frontend && CI= npm run build
+#
+#      - name: FRONTEND Deploy to S3
+#        run: aws s3 sync frontend/build s3://nameslol
