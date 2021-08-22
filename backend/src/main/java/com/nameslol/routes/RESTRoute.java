@@ -47,14 +47,6 @@ public class RESTRoute extends RouteBuilder {
                 .log("RiotAPIException handled: ${exception.message}")
                 .to("bean:errorResponseGenerator?method=generate(${exception.message}, 500)");
 
-        onException(Exception.class)
-                .handled(Boolean.TRUE)
-                .setHeader(Exchange.HTTP_RESPONSE_CODE, constant("500"))
-                .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .log(LoggingLevel.ERROR, "${exception.message}")
-                .log(LoggingLevel.ERROR, "${exception.stacktrace}")
-                .to("bean:errorResponseGenerator?method=generate(${exception.message}, 500)");
-
         restConfiguration()
                 .host("{{rest.host}}").port("{{rest.port}}")
                 .component("netty-http")

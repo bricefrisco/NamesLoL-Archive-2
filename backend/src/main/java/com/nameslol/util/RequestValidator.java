@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public final class RequestValidator {
     private static final Pattern PATTERN = Pattern.compile("[^A-Za-z0-9 ]");
 
-    public static boolean isValid(String name) throws Exception {
+    public static boolean isValid(String name) {
         if (name.trim().length() != 6) return false;
 
         for (char c : name.trim().toCharArray()) {

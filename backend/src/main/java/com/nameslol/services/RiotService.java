@@ -2,6 +2,7 @@ package com.nameslol.services;
 
 import com.nameslol.models.Region;
 import com.nameslol.models.SummonerRecordDTO;
+import com.nameslol.models.exceptions.BadRequestException;
 import com.nameslol.models.exceptions.RiotAPIException;
 import com.nameslol.models.exceptions.SummonerNotFoundException;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -27,19 +28,20 @@ public class RiotService {
         return str.trim().toUpperCase();
     }
 
-    public SummonerRecordDTO fetchSummonerName(String name, String region) throws URISyntaxException {
-        Region r = Region.valueOf(region.toUpperCase());
-        RiotAPI riotAPI = RestClientBuilder.newBuilder()
-                .baseUri(new URI(String.format(RIOT_API_URI, r.toRiotFormat())))
-                .build(RiotAPI.class);
-
+    public SummonerRecordDTO fetchSummonerName(String name, String region) {
         try {
+            Region r = Region.valueOf(region.toUpperCase());
+            RiotAPI riotAPI = RestClientBuilder.newBuilder()
+                    .baseUri(new URI(String.format(RIOT_API_URI, r.toRiotFormat())))
+                    .build(RiotAPI.class);
             return riotAPI.getSummoner(name);
         } catch (WebApplicationException ex) {
             if (ex.getResponse().getStatus() == 404) {
                 throw new SummonerNotFoundException("Summoner not found.");
             }
             throw new RiotAPIException(ex.getMessage());
+        } catch (URISyntaxException e) {
+            throw new BadRequestException("URL could not be parsed.");
         }
     }
 }
