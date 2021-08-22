@@ -68,7 +68,7 @@ public class DynamoDBRoute extends RouteBuilder {
 
         from("direct:query-between")
                 .routeId("query-between")
-                .to("bean:queryUtil?method=tween(${headers.region}, ${headers.t1}, ${headers.t2})")
+                .to("bean:queryUtil?method=between(${headers.region}, ${headers.t1}, ${headers.t2})")
                 .setHeader("CamelAwsDdbKeyConditions", simple("${body}"))
                 .setHeader("CamelAwsDdbLimit", simple("{{dataloader.query-range-limit}}"))
                 .setHeader("CamelAwsDdbIndexName", simple("region-activation-date-index"))
