@@ -43,7 +43,7 @@ const UpdateButton = ({ summonerName }: Props) => {
     setLoading(true);
     setSuccess(false);
 
-    fetch(`${process.env.REACT_APP_BACKEND_URI}/${region}/summoners/${summonerName}`)
+    fetch(`${process.env.REACT_APP_BACKEND_URI}/${region.toLowerCase()}/summoners/${summonerName}`)
       .then(parseResponse)
       .then((summoner: any) => {
         dispatch(updateSummoner(summoner));
