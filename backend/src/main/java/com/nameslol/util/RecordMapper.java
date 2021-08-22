@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Named("recordMapper")
-public final class RecordMapper {
-    public static long toAvailabilityDate(long revisionDate, int level) {
+public class RecordMapper {
+    public long toAvailabilityDate(long revisionDate, int level) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(revisionDate);
         if (level <= 6) {
@@ -26,7 +26,7 @@ public final class RecordMapper {
         return calendar.toInstant().toEpochMilli();
     }
 
-    public static Map<String, AttributeValue> toAttributeValues(SummonerRecordDTO dto, Region region) {
+    public Map<String, AttributeValue> toAttributeValues(SummonerRecordDTO dto, Region region) {
         Map<String, AttributeValue> result = new HashMap<>();
         result.put("ad", toAttributeNumber(toAvailabilityDate(dto.getRevisionDate(), dto.getSummonerLevel())));
         result.put("n", toAttributeString(region.name() + "#" + dto.getName().trim().toUpperCase()));
@@ -40,11 +40,11 @@ public final class RecordMapper {
         return result;
     }
 
-    public static List<SummonerResponseDTO> toSummonerResponseDTOs(List<Map<String, AttributeValue>> req) {
-        return req.stream().map(RecordMapper::toSummonerResponseDTO).collect(Collectors.toList());
+    public List<SummonerResponseDTO> toSummonerResponseDTOs(List<Map<String, AttributeValue>> req) {
+        return req.stream().map(this::toSummonerResponseDTO).collect(Collectors.toList());
     }
 
-    public static SummonerResponseDTO toSummonerResponseDTO(SummonerRecordDTO summoner, Region region) {
+    public SummonerResponseDTO toSummonerResponseDTO(SummonerRecordDTO summoner, Region region) {
         SummonerResponseDTO response = new SummonerResponseDTO();
         response.setProfileIconId(summoner.getProfileIconId());
         response.setName(summoner.getName());
@@ -57,7 +57,7 @@ public final class RecordMapper {
         return response;
     }
 
-    public static SummonerResponseDTO toSummonerResponseDTO(Map<String, AttributeValue> req) {
+    public SummonerResponseDTO toSummonerResponseDTO(Map<String, AttributeValue> req) {
         SummonerResponseDTO res = new SummonerResponseDTO();
         res.setRegion(req.get("r").s());
         res.setAccountId(req.get("aid").s());
@@ -70,7 +70,7 @@ public final class RecordMapper {
         return res;
     }
 
-    public static SummonersResponseDTO toSummonersResponseDTO(List<SummonerResponseDTO> summoners) {
+    public SummonersResponseDTO toSummonersResponseDTO(List<SummonerResponseDTO> summoners) {
         summoners = summoners.stream().sorted(Comparator.comparing(SummonerResponseDTO::getAvailabilityDate)).collect(Collectors.toList());
 
         SummonersResponseDTO response = new SummonersResponseDTO();
@@ -81,7 +81,7 @@ public final class RecordMapper {
         return response;
     }
 
-    public static Map<String, AttributeValue> toAttributeMap(String name, String region) {
+    public Map<String, AttributeValue> toAttributeMap(String name, String region) {
         Map<String, AttributeValue> result = new HashMap<>();
         result.put("n", toAttributeString(region.toUpperCase() + "#" + name));
         return result;

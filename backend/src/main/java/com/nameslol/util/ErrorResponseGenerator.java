@@ -12,11 +12,11 @@ import java.sql.Timestamp;
 
 @ApplicationScoped
 @Named("errorResponseGenerator")
-public final class ErrorResponseGenerator {
+public class ErrorResponseGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorResponseGenerator.class);
     public static ObjectMapper MAPPER = new ObjectMapper();
 
-    public static String generate(String message, int statusCode) {
+    public String generate(String message, int statusCode) {
         if (message == null) message = "Unknown exception occurred.";
 
         ErrorResponse errorResponse = new ErrorResponse(

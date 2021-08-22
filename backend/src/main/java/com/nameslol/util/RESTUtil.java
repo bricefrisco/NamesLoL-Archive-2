@@ -9,10 +9,10 @@ import javax.inject.Named;
 
 @ApplicationScoped
 @Named("restUtil")
-public final class RESTUtil {
+public class RESTUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(RESTUtil.class);
 
-    public static void logRequest(Exchange exchange) {
+    public void logRequest(Exchange exchange) {
         String method = exchange.getIn().getHeader("CamelHttpMethod", String.class);
         String path = exchange.getIn().getHeader("CamelHttpPath", String.class);
         String query = exchange.getIn().getHeader("CamelHttpRawQuery", String.class);
@@ -29,7 +29,7 @@ public final class RESTUtil {
         LOGGER.info(log.toString());
     }
 
-    public static String toIP(Exchange exchange) {
+    public String toIP(Exchange exchange) {
         String ip = exchange.getIn().getHeader("X-Forwarded-For", String.class);
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = exchange.getIn().getHeader("Proxy-Client-IP", String.class);

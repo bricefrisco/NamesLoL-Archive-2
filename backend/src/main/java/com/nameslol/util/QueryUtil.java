@@ -14,8 +14,8 @@ import java.util.Map;
 
 @ApplicationScoped
 @Named("queryUtil")
-public final class QueryUtil {
-    public static Map<String, Condition> byName(String name, String region) {
+public class QueryUtil {
+    public Map<String, Condition> byName(String name, String region) {
         Map<String, Condition> query = new HashMap<>();
         AttributeValue nameAttr = RecordMapper.toAttributeString(toRegion(region).name() + "#" + name.trim().toUpperCase());
         Condition cond = Condition.builder().attributeValueList(nameAttr).comparisonOperator(ComparisonOperator.EQ).build();
@@ -23,7 +23,7 @@ public final class QueryUtil {
         return query;
     }
 
-    public static Map<String, Condition> between(String region, long t1, long t2) {
+    public Map<String, Condition> between(String region, long t1, long t2) {
         Map<String, Condition> query = new HashMap<>();
         AttributeValue r = RecordMapper.toAttributeString(toRegion(region).name());
         AttributeValue t1v = RecordMapper.toAttributeNumber(t1);
@@ -35,7 +35,7 @@ public final class QueryUtil {
         return query;
     }
 
-    public static Map<String, Condition> range(String region, long timestamp, boolean backwards) {
+    public Map<String, Condition> range(String region, long timestamp, boolean backwards) {
         Map<String, Condition> query = new HashMap<>();
         AttributeValue r = RecordMapper.toAttributeString(toRegion(region).name());
         AttributeValue t = RecordMapper.toAttributeNumber(timestamp);
@@ -46,7 +46,7 @@ public final class QueryUtil {
         return query;
     }
 
-    public static Map<String, Condition> byNameSize(String region, long timestamp, boolean backwards, int nameSize) {
+    public Map<String, Condition> byNameSize(String region, long timestamp, boolean backwards, int nameSize) {
         Map<String, Condition> query = new HashMap<>();
         AttributeValue nl = RecordMapper.toAttributeString(toRegion(region).name() + "#" + nameSize);
         AttributeValue t = RecordMapper.toAttributeNumber(timestamp);
@@ -57,41 +57,41 @@ public final class QueryUtil {
         return query;
     }
 
-    public static long lastWeekInMs() {
+    public long lastWeekInMs() {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, 7);
         return cal.toInstant().toEpochMilli();
     }
 
-    public static long nextWeekInMs() {
+    public long nextWeekInMs() {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -7);
         return cal.toInstant().toEpochMilli();
     }
 
-    public static long lastYearInMs() {
+    public long lastYearInMs() {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, -1);
         return cal.toInstant().toEpochMilli();
     }
 
-    public static boolean summonerNameIsDifferent(String dynamoName, String riotName) {
+    public boolean summonerNameIsDifferent(String dynamoName, String riotName) {
         if (dynamoName == null || riotName == null) return true;
         if (dynamoName.isBlank() || riotName.isBlank()) return true;
         return !dynamoName.equalsIgnoreCase(riotName.trim());
     }
 
-    public static boolean shouldContinueQueryingLastYear(SummonersResponseDTO response) {
+    public boolean shouldContinueQueryingLastYear(SummonersResponseDTO response) {
         return response.getSummoners() != null &&
                 response.getSummoners().size() > 1 &&
                 response.getForwards() < System.currentTimeMillis();
     }
 
-    public static boolean shouldContinueQueryingAll(SummonersResponseDTO response) {
+    public boolean shouldContinueQueryingAll(SummonersResponseDTO response) {
         return response.getSummoners() != null && response.getSummoners().size() > 1;
     }
 
-    private static Region toRegion(String r) {
+    private Region toRegion(String r) {
         if (r == null || r.isBlank()) throw new IllegalArgumentException("'" + r + "' is in invalid region.");
         try {
             return Region.valueOf(r.toUpperCase());
