@@ -2,7 +2,7 @@ import React from "react";
 import {
     BrowserRouter as Router,
     Switch,
-    Route,
+    Route, Redirect,
 } from "react-router-dom";
 import NamesLoL from "./components/NamesLoL";
 import Navigation from "./components/Navigation";
@@ -23,16 +23,19 @@ const theme = createMuiTheme({
     }
 })
 
-function App() {
+const App = () => {
     return (
         <MuiThemeProvider theme={theme}>
             <Router>
                 <Switch>
-                    <Route path='/'>
+                    <Route exact path='/summoners'>
                         <>
                             <Navigation/>
                             <NamesLoL/>
                         </>
+                    </Route>
+                    <Route path = '/'>
+                        <Redirect to='/summoners' />
                     </Route>
                 </Switch>
             </Router>

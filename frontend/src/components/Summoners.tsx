@@ -3,6 +3,8 @@ import {makeStyles, Typography} from "@material-ui/core";
 import SummonersTable from "./SummonersTable";
 import Filters from "./Filters";
 import Pagination from "./Pagination";
+import {useHistory, useLocation} from "react-router-dom";
+import {navigate, useParams} from "../utils/api";
 
 const useStyles = makeStyles((theme) => ({
     title: {
@@ -30,8 +32,40 @@ const useStyles = makeStyles((theme) => ({
     },
 }))
 
+const timeIsValid = (time: string | number | null) => {
+    if (time === undefined || time === null) return false;
+    if (isNaN(Number(time))) return false;
+    return Number(time) >= 1;
+}
+
+const backwardsIsValid = (backwards: string | null) => {
+    if (backwards === undefined || backwards === null) return false;
+    return !(backwards !== 'true' && backwards !== 'false');
+}
+
+const nameLengthIsValid = (nameLength: string | null) => {
+    if (isNaN(Number(nameLength))) return false;
+    return Number(nameLength) >= 3 && Number(nameLength) <= 16;
+}
+
 const Summoners = () => {
     const classes = useStyles()
+    const params = useParams();
+    const history = useHistory();
+
+    if (!timeIsValid(params.get('time')) || !backwardsIsValid(params.get('backwards'))) {
+        navigate(history, new Date().valueOf(), false, null)
+        return null;
+    }
+
+    const time = parseInt(params.get('time') as string)
+    const backwards = params.get('backwards') === 'true'
+
+    let nameLength = params.get('nameLength')
+    if (params.get('nameLength') && !nameLengthIsValid(params.get('nameLength'))) {
+        navigate(history, time, backwards, null);
+        return null;
+    }
 
     return (
         <>
@@ -41,7 +75,7 @@ const Summoners = () => {
             <div className={classes.box}>
                 <div className={classes.tableArea}>
                     <Pagination showWhenLoading={false}/>
-                    <SummonersTable />
+                    <SummonersTable timestamp={time} backwards={backwards} nameLength={nameLength ? parseInt(nameLength as string) : null} />
                     <Pagination />
                 </div>
                 <Filters />

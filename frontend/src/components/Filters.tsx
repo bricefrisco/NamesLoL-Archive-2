@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {
   Button,
   Divider,
@@ -11,6 +11,8 @@ import {
 } from "@material-ui/core";
 import {useDispatch} from "react-redux";
 import { setNameLength } from "../state/settingsSlice";
+import {useHistory} from "react-router-dom";
+import {navigate, useParams} from "../utils/api";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -59,9 +61,26 @@ const menuItems = ["Any", 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 const Filters = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const params = useParams();
+  const history = useHistory();
+
   const [nl, setNL] = React.useState<any>("Any");
 
+  const nameLength = params.get('nameLength');
+
+  useEffect(() => {
+    if (!nameLength && nl !== 'Any') {
+      setNL('Any')
+      return
+    }
+
+    if (nameLength && nameLength !== nl) {
+      setNL(nameLength);
+    }
+  }, [nameLength])
+
   const apply = () => {
+    navigate(history, params.get('time'), params.get('backwards'), nl);
     dispatch(setNameLength(nl));
   };
 
@@ -88,7 +107,6 @@ const Filters = () => {
       <Button
         className={classes.button}
         variant="outlined"
-        // color="secondary"
         onClick={apply}
       >
         Apply

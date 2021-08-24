@@ -3,13 +3,14 @@ import {IconButton, makeStyles} from "@material-ui/core";
 import Moment from "react-moment";
 import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {
-    fetchSummoners,
     getPagination,
     getLoading,
     getError,
 } from "../state/summonersSlice";
+import {useHistory} from "react-router-dom";
+import {navigate, useParams} from "../utils/api";
 
 const useStyles = makeStyles((theme) => ({
     pagination: {
@@ -42,18 +43,19 @@ interface Props {
 
 const Pagination = ({showWhenLoading}: Props) => {
     const classes = useStyles();
-    const dispatch = useDispatch();
+    const history = useHistory();
+    const params = useParams();
 
     const error = useSelector(getError);
     const loading = useSelector(getLoading);
     const pagination = useSelector(getPagination);
 
     const goBackwards = () => {
-        dispatch(fetchSummoners(pagination.backwards, true));
+        navigate(history, pagination.backwards, true, params.get('nameLength'))
     };
 
     const goForwards = () => {
-        dispatch(fetchSummoners(pagination.forwards, false));
+        navigate(history, pagination.forwards, false, params.get('nameLength'))
     };
 
     if (loading && !showWhenLoading) return null;

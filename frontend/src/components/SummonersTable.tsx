@@ -81,7 +81,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const SummonersTable = () => {
+type SummonersTableProps = {
+  timestamp: number,
+  backwards: boolean,
+  nameLength: number | null
+}
+
+const SummonersTable = ({timestamp, backwards, nameLength} : SummonersTableProps) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const loading = useSelector(getLoading);
@@ -89,12 +95,12 @@ const SummonersTable = () => {
   const error = useSelector(getError);
   const errorMessage = useSelector(getErrorMessage);
   const summoners = useSelector(getSummoners);
-  const nameLength = useSelector(getNameLength);
   const region = useSelector(getRegion);
 
+
   useEffect(() => {
-    dispatch(fetchSummoners(new Date().valueOf(), false));
-  }, [nameLength, region, dispatch]);
+    dispatch(fetchSummoners(timestamp, backwards, nameLength));
+  }, [nameLength, region, dispatch, timestamp, backwards]);
 
   if (loading)
     return (
@@ -105,7 +111,7 @@ const SummonersTable = () => {
     return (
         <div className={`${classes.alert}`}>
             Oh no! An error occurred: '{errorMessage}'<br />
-            Please <span className={classes.link} onClick={() => dispatch(fetchSummoners(new Date().valueOf(), false))}>try again.</span>{' '}
+            Please <span className={classes.link} onClick={() => dispatch(fetchSummoners(timestamp, backwards, nameLength))}>try again.</span>{' '}
             If the issue persists, please let us know{' '}
             <a className={classes.link} target='_blank' rel='noreferrer noopener' href='https://github.com/bricefrisco/LoLNames/issues/new'>here.</a>
         </div>

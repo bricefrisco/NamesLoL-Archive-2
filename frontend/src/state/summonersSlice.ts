@@ -53,22 +53,17 @@ export const getError = (state: any) => state.summoners.error;
 export const getErrorMessage = (state: any) => state.summoners.errorMessage;
 export const getPagination = (state: any) => state.summoners.pagination;
 
-export const fetchSummoners = (timestamp: number, backwards: boolean) => (
+export const fetchSummoners = (timestamp: number, backwards: boolean, nameLength: number | null) => (
     dispatch: any,
     getState: any
 ) => {
     dispatch(loading());
-    const nameLength = getState().settings.nameLength;
     const region = getState().settings.region;
 
-    const url = new URL(
-        `${process.env.REACT_APP_BACKEND_URI}/${region}/summoners`
-    );
+    const url = new URL(`${process.env.REACT_APP_BACKEND_URI}/${region}/summoners`);
     url.searchParams.append("timestamp", String(timestamp));
     url.searchParams.append("backwards", String(backwards));
-    if (nameLength && nameLength !== "Any") {
-        url.searchParams.append("nameLength", String(nameLength));
-    }
+    if (nameLength) url.searchParams.append("nameLength", String(nameLength));
 
     fetch(url.toString())
         .then(parseResponse)
@@ -88,9 +83,7 @@ export const updateSummoner = (summoner: SummonerData) => (
     dispatch: any,
     getState: any
 ) => {
-    console.log('summoner: ' + JSON.stringify(summoner));
     const summoners = getState().summoners.summoners;
-    console.log(summoner.name.replace(/ /g, '').toLowerCase())
     const updatedSummoners = summoners.map((s: SummonerData) => {
         if (s.name.replace(/ /g, '').toLowerCase() !== summoner.name.replace(/ /g, '').toLowerCase()) return s;
         return {...summoner, name: s.name.toLowerCase()};
