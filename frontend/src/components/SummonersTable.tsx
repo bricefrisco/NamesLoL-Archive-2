@@ -6,7 +6,7 @@ import {
   getLoaded,
   getLoading, getError, getErrorMessage,
 } from "../state/summonersSlice";
-import { getNameLength, getRegion } from "../state/settingsSlice";
+import { getRegion } from "../state/settingsSlice";
 import {
   LinearProgress,
   makeStyles,

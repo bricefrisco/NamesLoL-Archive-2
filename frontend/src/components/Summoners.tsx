@@ -3,7 +3,7 @@ import {makeStyles, Typography} from "@material-ui/core";
 import SummonersTable from "./SummonersTable";
 import Filters from "./Filters";
 import Pagination from "./Pagination";
-import {useHistory, useLocation} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import {navigate, useParams} from "../utils/api";
 
 const useStyles = makeStyles((theme) => ({
