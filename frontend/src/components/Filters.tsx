@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     border: '1px solid rgba(145, 158, 171, 0.24)',
     borderRadius: 5,
     padding: theme.spacing(2),
-    marginTop: theme.spacing(6.4),
+    marginTop: theme.spacing(6.66),
     marginLeft: theme.spacing(2),
     '@media (max-width: 850px)': {
       marginBottom: theme.spacing(2),

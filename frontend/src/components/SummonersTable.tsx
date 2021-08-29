@@ -113,7 +113,7 @@ const SummonersTable = ({timestamp, backwards, nameLength} : SummonersTableProps
             Oh no! An error occurred: '{errorMessage}'<br />
             Please <span className={classes.link} onClick={() => dispatch(fetchSummoners(timestamp, backwards, nameLength))}>try again.</span>{' '}
             If the issue persists, please let us know{' '}
-            <a className={classes.link} target='_blank' rel='noreferrer noopener' href='https://github.com/bricefrisco/LoLNames/issues/new'>here.</a>
+            <a className={classes.link} target='_blank' rel='noreferrer noopener' href='https://github.com/bricefrisco/NamesLoL/issues'>here.</a>
         </div>
     )
   }

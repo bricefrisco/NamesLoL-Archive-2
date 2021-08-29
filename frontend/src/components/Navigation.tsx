@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
         maxHeight: 48,
         minHeight: 48,
     },
-    container: {
+    flexBetween: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -44,31 +44,33 @@ const Navigation = () => {
     return (
         <AppBar position="static" className={classes.appbar}>
             <Toolbar className={classes.appbar}>
-                <Container className={classes.container}>
+                <Container className={classes.flexBetween}>
                     <Typography variant="h6">
                         NamesLoL
                     </Typography>
-                    <div className={classes.region}>
-                        <LanguageIcon/>
-                        <FormControl>
-                            <Select
-                                autoWidth
-                                value={region}
-                                variant="filled"
-                                disableUnderline
-                                className={classes.select}
-                                onChange={(e) => dispatch(changeRegion(e.target.value))}
-                            >
-                                {Object.keys(Region).map((region) => (
-                                    <MenuItem
-                                        key={region.toString().toUpperCase()}
-                                        value={region}
-                                    >
-                                        {region.toString().toUpperCase()}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
+                    <div className={classes.flexBetween}>
+                        <div className={classes.region}>
+                            <LanguageIcon/>
+                            <FormControl>
+                                <Select
+                                    autoWidth
+                                    value={region}
+                                    variant="filled"
+                                    disableUnderline
+                                    className={classes.select}
+                                    onChange={(e) => dispatch(changeRegion(e.target.value))}
+                                >
+                                    {Object.keys(Region).map((region) => (
+                                        <MenuItem
+                                            key={region.toString().toUpperCase()}
+                                            value={region}
+                                        >
+                                            {region.toString().toUpperCase()}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </div>
                     </div>
                 </Container>
             </Toolbar>
