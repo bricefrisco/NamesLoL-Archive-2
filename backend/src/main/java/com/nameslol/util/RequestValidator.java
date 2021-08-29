@@ -15,8 +15,6 @@ public class RequestValidator {
     private static final Pattern PATTERN = Pattern.compile("[^A-Za-z0-9 ]");
 
     public boolean isValid(String name) {
-        if (name.trim().length() != 6) return false;
-
         for (char c : name.trim().toCharArray()) {
             if (!Character.isLetterOrDigit(c)) {
                 System.out.println("Filtering name '" + name + "', contains non-character '" + c + "'");

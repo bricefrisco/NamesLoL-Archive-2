@@ -7,7 +7,6 @@ import com.nameslol.models.exceptions.RiotAPIException;
 import com.nameslol.models.exceptions.SummonerNotFoundException;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.apache.camel.Exchange;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestParamType;

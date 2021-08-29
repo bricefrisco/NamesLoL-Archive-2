@@ -1,9 +1,6 @@
 package com.nameslol.routes;
 
 import com.nameslol.models.exceptions.SummonerNotFoundException;
-import com.nameslol.util.QueryUtil;
-import com.nameslol.util.RecordMapper;
-import com.nameslol.util.RequestValidator;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
