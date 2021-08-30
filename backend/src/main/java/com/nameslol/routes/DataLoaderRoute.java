@@ -32,7 +32,8 @@ public class DataLoaderRoute extends RouteBuilder {
                     .wireTap("seda:kr-queue?blockWhenFull=true")
                     .wireTap("seda:lan-queue?blockWhenFull=true")
                     .wireTap("seda:las-queue?blockWhenFull=true")
-                    .wireTap("seda:tr-queue?blockWhenFull=true");
+                    .wireTap("seda:tr-queue?blockWhenFull=true")
+                    .wireTap("seda:oce-queue?blockWhenFull=true");
 
         from("quartz:week-refresh/na?cron={{dataloader.weekly-refresh-schedule}}")
                 .routeId("na-week-refresh")
@@ -58,6 +59,36 @@ public class DataLoaderRoute extends RouteBuilder {
                 .log("CRON job for na-complete-refresh started.")
                 .setHeader("region", constant("NA"))
                 .setHeader("sedaRoute", constant("seda:na-queue"))
+                .setHeader("shouldContinueQueryingAll", simple("${true}"))
+                .setHeader("timestamp", simple("1"))
+                .loopDoWhile(simple("${headers.shouldContinueQueryingAll} == true"))
+                .to("direct:continue-complete-refresh")
+                .end();
+
+        from("quartz:week-refresh/oce?cron={{dataloader.weekly-refresh-schedule}}")
+                .routeId("oce-week-refresh")
+                .log("CRON job for oce-week-refresh started.")
+                .setHeader("region", constant("OCE"))
+                .setHeader("sedaRoute", constant("seda:oce-queue"))
+                .to("direct:start-week-refresh");
+
+        from("quartz:year-refresh/oce?cron={{dataloader.yearly-refresh-schedule}}")
+                .routeId("oce-year-refresh")
+                .log("CRON job for oce-year-refresh started.")
+                .setHeader("region", constant("OCE"))
+                .setHeader("sedaRoute", constant("seda:oce-queue"))
+                .setHeader("shouldContinueQueryingLastYear", simple("${true}"))
+                .to("bean:queryUtil?method=lastYearInMs")
+                .setHeader("timestamp", simple("${body}"))
+                .loopDoWhile(simple("${headers.shouldContinueQueryingLastYear} == true"))
+                .to("direct:continue-year-refresh")
+                .end();
+
+        from("quartz:complete-refresh/oce?cron={{dataloader.complete-refresh-schedule}}")
+                .routeId("oce-complete-refresh")
+                .log("CRON job for oce-complete-refresh started.")
+                .setHeader("region", constant("OCE"))
+                .setHeader("sedaRoute", constant("seda:oce-queue"))
                 .setHeader("shouldContinueQueryingAll", simple("${true}"))
                 .setHeader("timestamp", simple("1"))
                 .loopDoWhile(simple("${headers.shouldContinueQueryingAll} == true"))
@@ -278,6 +309,12 @@ public class DataLoaderRoute extends RouteBuilder {
                 .routeId("na-queue")
                 .throttle(throttle)
                 .setHeader("region", simple("NA"))
+                .to("direct:update-summoner");
+
+        from("seda:oce-queue?concurrentConsumers={{dataloader.concurrent-consumers}}")
+                .routeId("oce-queue")
+                .throttle(throttle)
+                .setHeader("region", simple("OCE"))
                 .to("direct:update-summoner");
 
         from("seda:br-queue?concurrentConsumers={{dataloader.concurrent-consumers}}")

@@ -8,7 +8,8 @@ public enum Region {
     KR,
     LAN,
     LAS,
-    TR;
+    TR,
+    OCE;
 
     public String toRiotFormat() {
         switch(this) {
@@ -28,6 +29,8 @@ public enum Region {
                 return "tr1";
             case KR:
                 return "kr";
+            case OCE:
+                return "oc1";
             default:
                 throw new IllegalArgumentException("Region is invalid!");
         }

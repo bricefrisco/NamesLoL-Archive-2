@@ -17,38 +17,38 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-#      - uses: aws-actions/amazon-ecr-login@v1
-#
-#      - name: BACKEND Create application.properties
-#        run: |
-#          cd backend/src/main/resources
-#          echo riot.api-key=${{ secrets.RIOT_API_KEY }} >> application.properties
-#          echo dataloader.input-file=file:/home/jboss/dataloader?filename=input.txt >> application.properties
-#          echo dataloader.throttle-per-second=10 >> application.properties
-#          echo dataloader.weekly-refresh-schedule=0+0+*+*+*+? >> application.properties
-#          echo dataloader.yearly-refresh-schedule=0+0+0+?+*+FRI >> application.properties
-#          echo dataloader.complete-refresh-schedule=0+0+0+1+*+? >> application.properties
-#          echo dataloader.query-range-limit=8000 >> application.properties
-#          echo dataloader.concurrent-consumers=5 >> application.properties
-#          echo aws.region=${{ secrets.AWS_REGION }} >> application.properties
-#          echo aws.access-key=${{ secrets.AWS_ACCESS_KEY_ID }} >> application.properties
-#          echo aws.secret-key=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> application.properties
-#          echo aws.dynamodb.limit=35 >> application.properties
-#          echo rest.host=0.0.0.0 >> application.properties
-#          echo rest.port=8081 >> application.properties
-#          echo rest.throttle-ms=1300 >> application.properties
-#          echo quarkus.arc.unremovable-types=java.lang.** >> application.properties
-#
-#      - name: BACKEND Build a native executable
-#        run: mvn -f backend/pom.xml clean package -Pnative -Dquarkus.native.container-build=true
-#
-#      - name: BACKEND Build, tag, and push image to Amazon ECR
-#        run: |
-#          docker build -f backend/src/main/docker/Dockerfile.native -t ${{ secrets.AWS_ECR_REGISTRY }}/${{ secrets.AWS_ECR_REPOSITORY }} backend/.
-#          docker push ${{ secrets.AWS_ECR_REGISTRY }}/${{ secrets.AWS_ECR_REPOSITORY }}
-#
-#      - name: BACKEND Update fargate service
-#        run: aws ecs update-service --cluster ${{ secrets.AWS_CLUSTER_NAME }} --service ${{ secrets.AWS_SERVICE_NAME }} --force-new-deployment
+      - uses: aws-actions/amazon-ecr-login@v1
+
+      - name: BACKEND Create application.properties
+        run: |
+          cd backend/src/main/resources
+          echo riot.api-key=${{ secrets.RIOT_API_KEY }} >> application.properties
+          echo dataloader.input-file=file:/home/jboss/dataloader?filename=input.txt >> application.properties
+          echo dataloader.throttle-per-second=10 >> application.properties
+          echo dataloader.weekly-refresh-schedule=0+0+*+*+*+? >> application.properties
+          echo dataloader.yearly-refresh-schedule=0+0+0+?+*+FRI >> application.properties
+          echo dataloader.complete-refresh-schedule=0+0+0+1+*+? >> application.properties
+          echo dataloader.query-range-limit=8000 >> application.properties
+          echo dataloader.concurrent-consumers=5 >> application.properties
+          echo aws.region=${{ secrets.AWS_REGION }} >> application.properties
+          echo aws.access-key=${{ secrets.AWS_ACCESS_KEY_ID }} >> application.properties
+          echo aws.secret-key=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> application.properties
+          echo aws.dynamodb.limit=35 >> application.properties
+          echo rest.host=0.0.0.0 >> application.properties
+          echo rest.port=8081 >> application.properties
+          echo rest.throttle-ms=1300 >> application.properties
+          echo quarkus.arc.unremovable-types=java.lang.** >> application.properties
+
+      - name: BACKEND Build a native executable
+        run: mvn -f backend/pom.xml clean package -Pnative -Dquarkus.native.container-build=true
+
+      - name: BACKEND Build, tag, and push image to Amazon ECR
+        run: |
+          docker build -f backend/src/main/docker/Dockerfile.native -t ${{ secrets.AWS_ECR_REGISTRY }}/${{ secrets.AWS_ECR_REPOSITORY }} backend/.
+          docker push ${{ secrets.AWS_ECR_REGISTRY }}/${{ secrets.AWS_ECR_REPOSITORY }}
+
+      - name: BACKEND Update fargate service
+        run: aws ecs update-service --cluster ${{ secrets.AWS_CLUSTER_NAME }} --service ${{ secrets.AWS_SERVICE_NAME }} --force-new-deployment
 
       - name: FRONTEND Install dependencies
         run: cd frontend && npm install

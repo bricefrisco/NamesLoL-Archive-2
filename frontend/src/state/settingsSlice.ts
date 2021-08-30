@@ -6,10 +6,11 @@ export enum Region {
     BR = "br",
     EUNE = "eune",
     EUW = "euw",
+    OCE = "oce",
     KR = "kr",
     LAN = "lan",
     LAS = "las",
-    TR = "tr",
+    TR = "tr"
 }
 
 export const settingsSlice = createSlice({
