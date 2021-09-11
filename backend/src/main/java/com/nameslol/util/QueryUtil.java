@@ -17,6 +17,13 @@ import java.util.Map;
 @Named("queryUtil")
 @RegisterForReflection
 public class QueryUtil {
+    Long SECOND = 1000L;
+    Long MINUTE = SECOND * 60;
+    Long HOUR = MINUTE * 60;
+    Long DAY = HOUR * 24;
+    Long MONTH = DAY * 30;
+    Long YEAR = MONTH * 12;
+
     public Map<String, Condition> byName(String name, String region) {
         Map<String, Condition> query = new HashMap<>();
         AttributeValue nameAttr = RecordMapper.toAttributeString(toRegion(region).name() + "#" + name.trim().toUpperCase());
@@ -59,19 +66,25 @@ public class QueryUtil {
         return query;
     }
 
-    public long lastWeekInMs() {
+    public long threeDaysFromNow() {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, 7);
+        cal.add(Calendar.DATE, 3);
         return cal.toInstant().toEpochMilli();
     }
 
-    public long nextWeekInMs() {
+    public long threeDaysAgo() {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -7);
+        cal.add(Calendar.DATE, -3);
         return cal.toInstant().toEpochMilli();
     }
 
-    public long lastYearInMs() {
+    public long oneMonthAgo() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -1);
+        return cal.toInstant().toEpochMilli();
+    }
+
+    public long oneYearAgo() {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, -1);
         return cal.toInstant().toEpochMilli();
@@ -83,14 +96,16 @@ public class QueryUtil {
         return !dynamoName.equalsIgnoreCase(riotName.trim());
     }
 
-    public boolean shouldContinueQueryingLastYear(SummonersResponseDTO response) {
+    public boolean shouldContinueMonthRefresh(SummonersResponseDTO response) {
         return response.getSummoners() != null &&
                 response.getSummoners().size() > 1 &&
-                response.getForwards() < System.currentTimeMillis();
+                response.getForwards() < (System.currentTimeMillis() + MONTH);
     }
 
-    public boolean shouldContinueQueryingAll(SummonersResponseDTO response) {
-        return response.getSummoners() != null && response.getSummoners().size() > 1;
+    public boolean shouldContinueYearRefresh(SummonersResponseDTO response) {
+        return response.getSummoners() != null &&
+                response.getSummoners().size() > 1 &&
+                response.getForwards() < (System.currentTimeMillis() + YEAR);
     }
 
     private Region toRegion(String r) {

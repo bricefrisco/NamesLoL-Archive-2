@@ -33,7 +33,6 @@ export const settingsSlice = createSlice({
         },
         setRegion: (state, action) => {
             state.region = action.payload;
-            console.log('previous: ' + document.cookie)
             document.cookie = 'region=' + action.payload;
         },
         setLimit: (state, action) => {

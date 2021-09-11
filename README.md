@@ -8,8 +8,8 @@
 https://nameslol.com/
 
 ## Details
-- Over half a million (and growing!) summoner names being tracked across eight regions.
-- All regions supported except for JP and RU.
+- Over half a million (and growing!) summoner names being tracked across five regions.
+- Regions: NA, EUNE, EUW, OCE, LAS
 - Apply filters on name length to find the most rare summoner names.
 - Upcoming and recently expired summoners are automatically updated periodically.
 - Easily update summoners in the list at any time by clicking the update button in the table view.
