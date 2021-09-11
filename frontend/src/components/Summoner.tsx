@@ -12,6 +12,7 @@ import {
 } from "../state/summonerSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {Close} from "@material-ui/icons";
+import moment from "moment";
 
 export interface SummonerData {
   id: string;
@@ -151,6 +152,12 @@ const Summoner = () => {
     }
   };
 
+  const getLang = () => {
+    if (navigator.languages !== undefined)
+      return navigator.languages[0];
+    return navigator.language;
+  }
+
   return (
     <Collapse in={open}>
       <div className={getClassName()}>
@@ -167,15 +174,12 @@ const Summoner = () => {
               <div className={classes.label}>Availability Date</div>
               <Moment
                 date={new Date(summoner.availabilityDate)}
-                format="MM/DD/YYYY hh:mm A"
+                format="MM/DD/YYYY hh:mm:ss A"
               />
             </div>
             <div className={classes.status}>
               <div className={classes.label}>Last Activity</div>
-              <Moment
-                date={new Date(summoner.revisionDate)}
-                format="MM/DD/YYYY"
-              />
+                <Moment date={new Date(summoner.revisionDate)} format="MM/DD/YYYY hh:mm:ss A" />
             </div>
             <div className={classes.status}>
               <div className={classes.label}>Level</div>

@@ -3,21 +3,23 @@ import {close} from './summonerSlice';
 
 export enum Region {
     NA = "na",
-    BR = "br",
     EUNE = "eune",
     EUW = "euw",
     OCE = "oce",
-    KR = "kr",
-    LAN = "lan",
-    LAS = "las",
-    TR = "tr"
+    LAS = "las"
+}
+
+const parseRegion = (cookie: string) => {
+    if (!cookie) return 'NA';
+    cookie = cookie.replace('region=', '')
+    return cookie;
 }
 
 export const settingsSlice = createSlice({
     name: "settings",
     initialState: {
         nameInput: "",
-        region: Region.NA.toUpperCase(),
+        region: parseRegion(document.cookie),
         nameLength: undefined,
         limit: false,
         hideSearch: false
@@ -31,6 +33,8 @@ export const settingsSlice = createSlice({
         },
         setRegion: (state, action) => {
             state.region = action.payload;
+            console.log('previous: ' + document.cookie)
+            document.cookie = 'region=' + action.payload;
         },
         setLimit: (state, action) => {
             state.limit = action.payload;

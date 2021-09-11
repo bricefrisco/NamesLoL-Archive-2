@@ -144,7 +144,7 @@ const SummonersTable = ({timestamp, backwards, nameLength} : SummonersTableProps
               <TableCell align="center" className={`${classes.tableCell}`} width={200}>
                 <Moment
                   date={new Date(summoner.availabilityDate)}
-                  format="MM/DD/YYYY hh:mm A"
+                  format="MM/DD/YYYY hh:mm:ss A"
                 />
               </TableCell>
               <TableCell align="right" className={`${classes.tableCell}`} width={100}>{summoner.level}</TableCell>
